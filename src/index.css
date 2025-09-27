@@ -1,1 +1,39 @@
 @import 'tailwindcss';
+@import 'swiper/css';
+@import 'swiper/css/navigation';
+@import 'swiper/css/pagination';
+
+@layer base {
+  body {
+    background-color: var(--color-bg-color);
+    @apply text-white;
+  }
+}
+
+@layer utilities {
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .bg-size-150 {
+    background-size: 150px;
+  }
+}
+/* Swiper custom styles */
+
+@theme {
+  --color-bg-color: #191b24;
+  --color-header-color: #0f111a;
+  --color-primary: #f62682;
+}
+
+@layer components {
+  .page-container {
+    max-width: 1280px;
+    @apply mx-auto;
+  }
+}
