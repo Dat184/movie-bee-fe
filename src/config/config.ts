@@ -12,6 +12,7 @@ export const fetchWithToken = (url: string): Promise<any> => {
 
 const tmdbEndpoint: string = 'https://api.themoviedb.org/3/movie/'
 const tmdbEndpointSearch: string = 'https://api.themoviedb.org/3/search/movie'
+const tmdbEndpointKeyword: string = 'https://api.themoviedb.org/3/keyword/'
 
 type MovieType = 'popular' | 'top_rated' | 'upcoming' | 'now_playing'
 type MetaType = 'credits' | 'videos' | 'images' | 'reviews' | 'similar' | 'recommendations'
@@ -32,5 +33,11 @@ export const tmdbAPI = {
   },
   getImage: (path: string, size: ImageSize): string => {
     return `https://image.tmdb.org/t/p/${size}${path}`
+  },
+  getGenres: (): string => {
+    return `https://api.themoviedb.org/3/genre/movie/list?language=en-US`
+  },
+  getCartoonMovies: (page: number = 1): string => {
+    return `${tmdbEndpointKeyword}6513-cartoon/movies?page=${page}`
   }
 }

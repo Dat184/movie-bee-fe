@@ -25,10 +25,37 @@
 }
 /* Swiper custom styles */
 
+.swiper-pagination {
+  bottom: 20px !important;
+}
+
+/* Text gradient utilities */
+.text-gradient-anime {
+  background: linear-gradient(235deg, rgb(255, 255, 255) 30%, rgb(247, 161, 11) 130%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-marvel {
+  background: linear-gradient(235deg, rgb(255, 255, 255) 30%, rgb(103, 65, 150) 130%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-usuk {
+  background: linear-gradient(235deg, rgb(255, 255, 255) 30%, rgb(255, 0, 153) 130%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 @theme {
   --color-bg-color: #191b24;
   --color-header-color: #0f111a;
   --color-primary: #f62682;
+  --color-footer-bg: #0f111a;
 }
 
 @layer components {
@@ -36,4 +63,9 @@
     max-width: 1280px;
     @apply mx-auto;
   }
+}
+
+.trending .swiper-slide {
+  width: 196px;
+  height: auto;
 }
