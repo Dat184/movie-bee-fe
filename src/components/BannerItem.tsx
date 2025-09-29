@@ -1,9 +1,33 @@
-import { Play } from "lucide-react";
+import { Play } from 'lucide-react'
+import { fetchWithToken, tmdbAPI } from '../config/config'
+import { useEffect, useState } from 'react'
 
-const BannerItem = ({ movie, genresList }: { movie: any; genresList: string[] }) => {
+const BannerItem = ({ movie }: { movie: any }) => {
+  const [genresList, setGenresList] = useState<string[]>([])
+  const getGenres = async () => {
+    const res = await fetchWithToken(tmdbAPI.getGenres())
+    // console.log('res', res.genres)
+    return res.genres
+  }
+
+  const mapGenres = async (ids: number[]) => {
+    const genres = await getGenres()
+    if (!genres) return ''
+    const movieGenres = genres.filter((genre: any) => ids.includes(genre.id))
+    return movieGenres.map((genre: any) => genre.name).join(', ')
+  }
+
+  useEffect(() => {
+    if (movie.genre_ids && movie.genre_ids.length > 0 && genresList.length === 0) {
+      mapGenres(movie.genre_ids).then((genreNames) => {
+        setGenresList(genreNames.split(', '))
+      })
+    }
+  }, [movie.genre_ids])
+
   return (
-    <div className='h-screen w-full rounded-lg relative overflow-hidden'>
-      <div className='overlay absolute inset-0 bg-gradient-to-t from-bg-color/100 via-black/50  to-transparent rounded-lg z-10'></div>
+    <div className='h-screen w-full rounded-lg relative overflow-hidden '>
+      <div className='overlay absolute inset-0 bg-gradient-to-t from-bg-color/100 via-black/30  to-bg-color/70 rounded-lg z-10'></div>
       <img
         src={`https://image.tmdb.org/t/p/original${movie.backdrop_path || movie.poster_path}`}
         alt={movie.title}

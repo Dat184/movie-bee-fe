@@ -1,4 +1,3 @@
-import React from 'react'
 import { fetchWithToken, tmdbAPI } from '../../config/config'
 import useSWR from 'swr'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -13,7 +12,21 @@ const Popular = () => {
         <h2 className='text-2xl font-bold'>Phim đang hot</h2>
         <div className='flex gap-5 overflow-x-auto pb-5'>
           {movies.length > 0 && (
-            <Swiper grabCursor={true} spaceBetween={17} slidesPerView={7} loop={true}>
+            <Swiper
+              grabCursor={true}
+              spaceBetween={17}
+              loop={true}
+              breakpoints={{
+                1521: {
+                  slidesPerView: 7,
+                  spaceBetween: 20
+                },
+                1600: {
+                  slidesPerView: 8,
+                  spaceBetween: 30
+                }
+              }}
+            >
               {movies.length > 0 &&
                 movies.map((item: any) => (
                   <SwiperSlide key={item.id}>

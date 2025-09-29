@@ -1,8 +1,9 @@
 import MovieCardTopic from './MovieCardTopic'
+import { Swiper, SwiperSlide } from 'swiper/react'
 
-const MovieList = ({ title }: { title: string }) => {
+const MovieList = ({ title, movies }: { title: string; movies: any[] }) => {
   return (
-    <div className='w-full h-fit flex flex-row  items-center justify-between'>
+    <div className='w-full h-fit flex flex-row items-center justify-between movie-list'>
       <div className=''>
         <h2
           className={
@@ -18,12 +19,31 @@ const MovieList = ({ title }: { title: string }) => {
         </h2>
         <p>Xem toàn bộ</p>
       </div>
-      <div className='grid grid-cols-3 gap-5'>
-        {/* Movie items would go here */}
-        <MovieCardTopic />
-        <MovieCardTopic />
-        <MovieCardTopic />
-        {/* <h2>asdddddddd</h2> */}
+      <div className='flex overflow-x-auto pb-5 w-5/6'>
+        {movies.length > 0 && (
+          <Swiper
+            grabCursor={true}
+            spaceBetween={20}
+            loop={true}
+            breakpoints={{
+              1521: {
+                slidesPerView: 3,
+                spaceBetween: 25
+              },
+              1600: {
+                slidesPerView: 4,
+                spaceBetween: 30
+              }
+            }}
+          >
+            {movies.length > 0 &&
+              movies.map((item: any) => (
+                <SwiperSlide key={item.id}>
+                  <MovieCardTopic movie={item} />
+                </SwiperSlide>
+              ))}
+          </Swiper>
+        )}
       </div>
     </div>
   )

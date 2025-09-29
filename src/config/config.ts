@@ -13,6 +13,7 @@ export const fetchWithToken = (url: string): Promise<any> => {
 const tmdbEndpoint: string = 'https://api.themoviedb.org/3/movie/'
 const tmdbEndpointSearch: string = 'https://api.themoviedb.org/3/search/movie'
 const tmdbEndpointKeyword: string = 'https://api.themoviedb.org/3/keyword/'
+const tmdbEndpointList: string = 'https://api.themoviedb.org/3/list/'
 
 type MovieType = 'popular' | 'top_rated' | 'upcoming' | 'now_playing'
 type MetaType = 'credits' | 'videos' | 'images' | 'reviews' | 'similar' | 'recommendations'
@@ -20,10 +21,10 @@ type ImageSize = 'w154' | 'w185' | 'w300' | 'w342' | 'w500' | 'w780' | 'original
 
 export const tmdbAPI = {
   getMovieList: (type: MovieType, page: number = 1): string => {
-    return `${tmdbEndpoint}${type}?page=${page}`
+    return `${tmdbEndpoint}${type}?language=vi-VN&page=${page}`
   },
   getMoviesearch: (query: string, page: number): string => {
-    return `${tmdbEndpointSearch}?query=${query}&language=en-US&page=${page}`
+    return `${tmdbEndpointSearch}?query=${query}&language=vi-VN&page=${page}`
   },
   getMovieDetails: (movieId: number | string): string => {
     return `${tmdbEndpoint}${movieId}`
@@ -38,6 +39,12 @@ export const tmdbAPI = {
     return `https://api.themoviedb.org/3/genre/movie/list?language=en-US`
   },
   getCartoonMovies: (page: number = 1): string => {
-    return `${tmdbEndpointKeyword}6513-cartoon/movies?page=${page}`
+    return `${tmdbEndpointKeyword}6513/movies?language=vi-VN&page=${page}`
+  },
+  getMovieByListId: (listId: number, page: number = 1): string => {
+    return `${tmdbEndpointList}${listId}?language=vi-VN&page=${page}`
+  },
+  getMovieByKeyword: (keywordId: number, page: number = 1): string => {
+    return `${tmdbEndpointKeyword}${keywordId}/movies?language=vi-VN&page=${page}`
   }
 }
