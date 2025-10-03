@@ -46,8 +46,8 @@ const BannerItem = ({ movie }: { movie: any }) => {
             </span>
           ))}
         </div>
-        <button className='w-fit h-15 rounded-full bg-primary gap-3 px-3 flex items-center justify-center hover:scale-110 transition-all'>
-          <Play /> Watch Now
+        <button className='w-fit h-13 rounded-full bg-primary gap-3 px-3 flex items-center justify-center hover:scale-110 transition-all'>
+          <Play fill="currentColor"/> Watch Now
         </button>
       </div>
     </div>

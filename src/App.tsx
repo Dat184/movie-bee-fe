@@ -3,6 +3,10 @@ import { Route, Routes } from 'react-router-dom'
 import { Fragment } from 'react/jsx-runtime'
 import Main from './components/layout/Main'
 import Home from './page/Home'
+import Login from './page/Login'
+import Register from './page/Register'
+import ResetPassword from './page/ResetPassword'
+import MoviePage from './page/MoviePage'
 
 function App() {
   return (
@@ -15,10 +19,13 @@ function App() {
         <Routes>
           <Route element={<Main />}>
             <Route path='/' element={<Home />}></Route>
-            <Route path='/movies' element={<div>movies</div>}></Route>
+            <Route path='/movies' element={<MoviePage />}></Route>
             <Route path='/contact' element={<div>contact</div>}></Route>
             <Route path='/*' element={<div>404 Not Found</div>}></Route>
           </Route>
+          <Route path='/login' element={<Login />}></Route>
+          <Route path='/register' element={<Register />}></Route>
+          <Route path='/forgot-password' element={<ResetPassword />}></Route>
         </Routes>
       </Suspense>
     </Fragment>
