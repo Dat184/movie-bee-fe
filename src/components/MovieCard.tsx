@@ -1,8 +1,13 @@
+import { useNavigate } from 'react-router-dom'
 import { tmdbAPI } from '../config/config'
 
 const MovieCard = ({ movie }: { movie: any }) => {
+  const navigate = useNavigate()
   return (
-    <section className='w-auto h-fit flex flex-col items-center justify-center'>
+    <section
+      className='w-auto h-fit flex flex-col items-center justify-center'
+      onClick={() => navigate(`/movies/${movie.id}`)}
+    >
       <img
         src={tmdbAPI.getImage(movie.poster_path, 'w500')}
         alt={movie.title}

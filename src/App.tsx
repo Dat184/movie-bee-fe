@@ -7,6 +7,7 @@ import Login from './page/Login'
 import Register from './page/Register'
 import ResetPassword from './page/ResetPassword'
 import MoviePage from './page/MoviePage'
+import MovieDetailPage from './page/MovieDetailPage'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route element={<Main />}>
             <Route path='/' element={<Home />}></Route>
             <Route path='/movies' element={<MoviePage />}></Route>
+            <Route path='/movies/:movieId' element={<MovieDetailPage />} />
             <Route path='/contact' element={<div>contact</div>}></Route>
             <Route path='/*' element={<div>404 Not Found</div>}></Route>
           </Route>

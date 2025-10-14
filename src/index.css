@@ -56,6 +56,7 @@
   --color-header-color: #0f111a;
   --color-primary: #f62682;
   --color-footer-bg: #0f111a;
+  --color-secondary: #6f5cf1;
 }
 
 @layer components {

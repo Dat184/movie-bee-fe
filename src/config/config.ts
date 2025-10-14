@@ -27,10 +27,10 @@ export const tmdbAPI = {
     return `${tmdbEndpointSearch}?query=${query}&language=vi-VN&page=${page}`
   },
   getMovieDetails: (movieId: number | string): string => {
-    return `${tmdbEndpoint}${movieId}`
+    return `${tmdbEndpoint}${movieId}?language=vi-VN`
   },
   getMovieMeta: (movieId: number | string, type: MetaType): string => {
-    return `${tmdbEndpoint}${movieId}/${type}?language=en-US`
+    return `${tmdbEndpoint}${movieId}/${type}`
   },
   getImage: (path: string, size: ImageSize): string => {
     return `https://image.tmdb.org/t/p/${size}${path}`

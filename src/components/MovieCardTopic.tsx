@@ -1,8 +1,11 @@
+import { use } from 'react'
 import { fetchWithToken, tmdbAPI } from '../config/config'
+import { useNavigate } from 'react-router-dom'
 
 const MovieCardTopic = ({ movie }: { movie: any }) => {
+  const navigate = useNavigate()
   return (
-    <div className='flex flex-col gap-3 w-94'>
+    <div className='flex flex-col gap-3 w-94 cursor-pointer' onClick={() => navigate(`/movies/${movie.id}`)}>
       <div className='h-60 rounded-lg w-94'>
         <img
           src={tmdbAPI.getImage(movie.backdrop_path, 'w500')}
