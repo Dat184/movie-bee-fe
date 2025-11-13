@@ -6,6 +6,7 @@ import MovieCard from '../MovieCard'
 const Popular = () => {
   const { data } = useSWR(() => tmdbAPI.getMovieList('popular'), fetchWithToken)
   const movies = data?.results || []
+  console.log(movies)
   return (
     <section className='trending h-fit px-5 mb-20'>
       <div className='flex flex-col gap-10'>

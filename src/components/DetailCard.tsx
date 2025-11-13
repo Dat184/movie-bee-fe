@@ -1,18 +1,23 @@
-import { MessageSquareMore, Star } from 'lucide-react'
+import { Star } from 'lucide-react'
 import { fetchWithToken, tmdbAPI } from '../config/config'
 import PlayNowBtn from './ui/PlayNowBtn'
 import { useState } from 'react'
 import useSWR from 'swr'
-import MovieCard from './MovieCard'
+import Comment from './Comment'
+import { useNavigate } from 'react-router-dom'
 
 const DetailCard = ({ data }: { data: any }) => {
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('trailer')
 
   const tabs = [
     { id: 'trailer', label: 'Trailer' },
-    { id: 'cast', label: 'Diễn viên' },
-    { id: 'recommend', label: 'Đề xuất' }
+    { id: 'cast', label: 'Diễn viên' }
   ]
+
+  const handleClickPlaybtn = () => {
+    navigate(`/watch/${data?.id}`)
+  }
 
   return (
     <div className='w-full h-full p-5 -mt-[100px] flex flex-row z-10 '>
@@ -38,11 +43,10 @@ const DetailCard = ({ data }: { data: any }) => {
       <div className='w-2/3  rounded-r-2xl rounded-l-[3rem] bg-bg-color'>
         <div className='p-10'>
           <div className='flex flex-row gap-3 justify-between items-center'>
-            <PlayNowBtn />
-            <div className='flex flex-col items-center gap-2 hover:scale-110 transition-all hover:bg-white/10 p-2 rounded-lg cursor-pointer'>
-              <MessageSquareMore fill='currentColor' />
-              <p>Bình luận</p>
+            <div onClick={handleClickPlaybtn}>
+              <PlayNowBtn />
             </div>
+
             <div className='w-fit h-13 rounded-full bg-secondary gap-3 px-3 flex items-center justify-center hover:scale-110 transition-all cursor-pointer'>
               <Star fill='currentColor' /> 9.0 <strong>Đánh giá</strong>
             </div>
@@ -66,8 +70,9 @@ const DetailCard = ({ data }: { data: any }) => {
           <div>
             {activeTab === 'trailer' && <MovieMeta type='videos' movieId={data?.id} />}
             {activeTab === 'cast' && <MovieMeta type='credits' movieId={data?.id} />}
-            {activeTab === 'recommend' && <MovieMeta type='similar' movieId={data?.id} />}
           </div>
+
+          <Comment />
         </div>
       </div>
     </div>
@@ -114,18 +119,6 @@ function MovieMeta({ type = 'videos', movieId }: { type: any; movieId: any }) {
               allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
               allowFullScreen
             ></iframe>
-          </div>
-        </div>
-      )
-    }
-    if (type === 'similar') {
-      return (
-        <div className='mt-5'>
-          <h2 className='font-bold text-3xl mb-10'>Similar Movies</h2>
-          <div className='grid grid-cols-4 gap-5'>
-            {results.slice(0, 8).map((item: any) => (
-              <MovieCard key={item.id} movie={item} />
-            ))}
           </div>
         </div>
       )

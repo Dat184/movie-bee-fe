@@ -27,7 +27,7 @@ const MoviePage = () => {
         </div>
         <button className='bg-primary text-white rounded-r-md py-1 px-6 h-10'>Tìm</button>
       </div>
-      <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-5 mt-10'>
+      <div className='grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4 p-5 mt-10'>
         {movies.map((movie: any) => (
           <MovieCard key={movie.id} movie={movie} />
         ))}
