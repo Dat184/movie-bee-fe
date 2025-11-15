@@ -75,8 +75,8 @@ const Login = () => {
                 Đăng nhập
               </button>
             </form>
-            <div onClick={() => navigate('/forgot-password')} className='hover:text-primary cursor-pointer'>
-              Quên mật khẩu
+            <div onClick={() => navigate('/confirm-email')} className='hover:text-primary cursor-pointer'>
+              Xác thực email
             </div>
           </div>
         </div>

@@ -1,3 +1,4 @@
+import { Clapperboard, MessageCircle, UserRound, UserRoundPlus } from 'lucide-react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 const Dashboard = () => {
@@ -14,30 +15,50 @@ const Dashboard = () => {
 
   return (
     <section className='w-full min-h-screen px-5 pt-5 flex flex-col'>
-      <h1 className='text-2xl font-bold mb-4'>Dashboard</h1>
-      <div className='w-full flex-1 rounded border-2 border-gray-800 p-4 flex flex-col gap-6'>
+      <h1 className='text-2xl font-bold mb-5'>Dashboard</h1>
+      <div className='w-full flex-1  p-4 flex flex-col gap-6'>
         {/* Stats Cards */}
         <div className='grid grid-cols-4 gap-4'>
-          <div className='bg-bg-color h-32 flex flex-col items-start rounded p-5 gap-5'>
-            <h1 className='text-gray-400'>Tổng số phim</h1>
-            <p className=''>100 bộ phim</p>
+          <div className='bg-bg-color rounded-xl h-32 flex items-center justify-between p-6 gap-5'>
+            <div className='flex flex-col'>
+              <p className='text-sm font-medium text-gray-400'>Tổng số phim</p>
+              <p className='mt-2 text-3xl font-bold'>100</p>
+            </div>
+            <div className='rounded-full bg-primary/10 p-3'>
+              <Clapperboard />
+            </div>
           </div>
-          <div className='bg-bg-color h-32 flex flex-col items-start rounded p-5 gap-5'>
-            <h1 className='text-gray-400'>Tổng số người dùng</h1>
-            <p>100 người dùng</p>
+          <div className='bg-bg-color rounded-xl h-32 flex items-center justify-between p-6 gap-5'>
+            <div className='flex flex-col'>
+              <p className='text-sm font-medium text-gray-400'>Tổng số người dùng</p>
+              <p className='mt-2 text-3xl font-bold'>100</p>
+            </div>
+            <div className='rounded-full bg-primary/10 p-3'>
+              <UserRound />
+            </div>
           </div>
-          <div className='bg-bg-color h-32 flex flex-col items-start rounded p-5 gap-5'>
-            <h1 className='text-gray-400'>Tổng số bình luận</h1>
-            <p>100 bình luận</p>
+          <div className='bg-bg-color rounded-xl h-32 flex items-center justify-between p-6 gap-5'>
+            <div className='flex flex-col'>
+              <p className='text-sm font-medium text-gray-400'>Tổng số bình luận</p>
+              <p className='mt-2 text-3xl font-bold'>100</p>
+            </div>
+            <div className='rounded-full bg-primary/10 p-3'>
+              <MessageCircle />
+            </div>
           </div>
-          <div className='bg-bg-color h-32 flex flex-col items-start rounded p-5 gap-5'>
-            <h1 className='text-gray-400'>Người dùng mới</h1>
-            <p>100 người dùng mới</p>
+          <div className='bg-bg-color rounded-xl h-32 flex items-center justify-between p-6 gap-5'>
+            <div className='flex flex-col'>
+              <p className='text-sm font-medium text-gray-400'>Người dùng mới</p>
+              <p className='mt-2 text-3xl font-bold'>100</p>
+            </div>
+            <div className='rounded-full bg-primary/10 p-3'>
+              <UserRoundPlus />
+            </div>
           </div>
         </div>
 
         {/* Chart Section */}
-        <div className='bg-bg-color rounded p-5 mt-5'>
+        <div className='bg-bg-color rounded-xl p-5 mt-5'>
           <h2 className='text-xl font-semibold mb-4'>Biểu đồ bình luận 7 ngày qua</h2>
           <ResponsiveContainer width='100%' height={350}>
             <LineChart data={commentData}>

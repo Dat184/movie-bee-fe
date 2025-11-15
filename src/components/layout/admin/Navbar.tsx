@@ -30,7 +30,7 @@ const Navbar = () => {
           Phim
         </NavLink>
         <NavLink
-          to='/admin/casts'
+          to='/admin/cast'
           className={({ isActive }) =>
             'mb-4 p-2 hover:bg-gray-700 rounded cursor-pointer' + (isActive ? ' bg-gray-700' : '')
           }

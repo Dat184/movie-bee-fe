@@ -1,6 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import * as Yup from 'yup'
 
 const schema = Yup.object({
@@ -29,8 +30,9 @@ const Register = () => {
   const onSubmit = async (data: any) => {
     if (isValid) {
       // Handle successful login
-      alert(`login successful: ${JSON.stringify(data)}`)
+      toast.success(`Registration successful: ${JSON.stringify(data)}`)
       reset()
+      navigate('/confirm-email')
     } else {
       // Handle login errors
       console.log('Login failed:', errors)

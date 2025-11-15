@@ -1,11 +1,11 @@
 import { Suspense } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { Fragment } from 'react/jsx-runtime'
 import Main from './components/layout/Main'
 import Home from './page/Home'
 import Login from './page/Login'
 import Register from './page/Register'
-import ResetPassword from './page/ResetPassword'
+import ConfirmEmail from './page/ConfirmEmail'
 import MoviePage from './page/MoviePage'
 import MovieDetailPage from './page/MovieDetailPage'
 import ContactPage from './page/ContactPage'
@@ -17,6 +17,10 @@ import CommentAdminPage from './page/admin/CommentAdminPage'
 import GenreAdminPage from './page/admin/GenreAdminPage'
 import UserAdminPage from './page/admin/UserAdminPage'
 import CastAdminPage from './page/admin/CastAdminPage'
+import CreateCast from './page/admin/CreateCast'
+import 'react-toastify/dist/ReactToastify.css'
+import { ToastContainer } from 'react-toastify'
+import NotFound from './page/NotFound'
 
 function App() {
   return (
@@ -33,23 +37,27 @@ function App() {
             <Route path='/movies/:movieId' element={<MovieDetailPage />} />
             <Route path='/watch/:movieId' element={<WatchPage />} />
             <Route path='/contact' element={<ContactPage />}></Route>
-            <Route path='/*' element={<div>404 Not Found</div>}></Route>
+            <Route path='/*' element={<NotFound />}></Route>
           </Route>
           <Route path='/login' element={<Login />}></Route>
           <Route path='/register' element={<Register />}></Route>
-          <Route path='/forgot-password' element={<ResetPassword />}></Route>
+          <Route path='/confirm-email' element={<ConfirmEmail />}></Route>
 
           {/* admin page */}
-          <Route element={<AdminMain />}>
-            <Route path='/admin/dashboard' element={<Dashboard />}></Route>
-            <Route path='/admin/movies' element={<MovieAdminPage />}></Route>
-            <Route path='/admin/casts' element={<CastAdminPage />}></Route>
-            <Route path='/admin/users' element={<UserAdminPage />}></Route>
-            <Route path='/admin/genres' element={<GenreAdminPage />}></Route>
-            <Route path='/admin/comments' element={<CommentAdminPage />}></Route>
+          <Route path='/admin' element={<AdminMain />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path='dashboard' element={<Dashboard />}></Route>
+            <Route path='movies' element={<MovieAdminPage />}></Route>
+            <Route path='cast' element={<CastAdminPage />}></Route>
+            <Route path='cast/create-cast' element={<CreateCast />}></Route>
+            <Route path='cast/edit-cast/:id' element={<CreateCast />}></Route>
+            <Route path='users' element={<UserAdminPage />}></Route>
+            <Route path='genres' element={<GenreAdminPage />}></Route>
+            <Route path='comments' element={<CommentAdminPage />}></Route>
           </Route>
         </Routes>
       </Suspense>
+      <ToastContainer />
     </Fragment>
   )
 }

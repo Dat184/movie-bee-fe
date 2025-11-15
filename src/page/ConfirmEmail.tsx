@@ -1,13 +1,14 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import * as Yup from 'yup'
 
 const schema = Yup.object({
-  email: Yup.string().email('Invalid email format').required('Please enter your email')
+  otp: Yup.string().required('Please enter your OTP')
 })
 
-const ResetPassword = () => {
+const ConfirmEmail = () => {
   const {
     register,
     handleSubmit,
@@ -22,8 +23,9 @@ const ResetPassword = () => {
   const onSubmit = async (data: any) => {
     if (isValid) {
       // Handle successful login
-      alert(`login successful: ${data.email}`)
+      toast.success('Xác thực email thành công! Vui lòng đăng nhập.')
       reset()
+      navigate('/login')
     } else {
       // Handle login errors
       console.log('Login failed:', errors)
@@ -36,9 +38,9 @@ const ResetPassword = () => {
         <div className='flex-1 bg-[url(./src/assets/img/login.jpg)] bg-cover bg-no-repeat p-2'></div>
         <div className='flex-1 bg-[#1E2545] p-2'>
           <div className='flex flex-col justify-center items-start h-full p-12 gap-4'>
-            <h1 className=' text-2xl font-semibold'>Quên mật khẩu</h1>
+            <h1 className=' text-2xl font-semibold'>Xác thực email của bạn</h1>
             <p className='text-sm text-gray-400'>
-              Nếu bạn đã có tài khoản,{' '}
+              Đã xác thực,{' '}
               <a
                 onClick={() => {
                   navigate('/login')
@@ -50,13 +52,13 @@ const ResetPassword = () => {
             </p>
             <form onSubmit={handleSubmit(onSubmit)}>
               <input
-                type='email'
+                type='text'
                 className='border border-solid border-[#ffffff10] rounded-md p-2 mt-2 w-full'
-                placeholder='Email'
-                {...register('email')}
-                id='email'
+                placeholder='Nhập mã OTP'
+                {...register('otp')}
+                id='otp'
               />
-              {errors?.email && <div className='text-sm text-red-500'>{errors.email.message}</div>}
+              {errors?.otp && <div className='text-sm text-red-500'>{errors.otp.message}</div>}
 
               <button
                 className={`bg-primary text-white rounded-md p-2 mt-4 w-full hover:opacity-80 transition-colors ${
@@ -74,4 +76,4 @@ const ResetPassword = () => {
   )
 }
 
-export default ResetPassword
+export default ConfirmEmail
