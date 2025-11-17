@@ -65,7 +65,7 @@ const GenreAdminPage = () => {
 
   return (
     <>
-      <section className='w-full min-h-screen px-5 pt-10 flex flex-col'>
+      <section className='w-full min-h-screen px-5 py-10 flex flex-col'>
         <div className='flex flex-row justify-between items-center mb-10'>
           <div>
             <h1 className='text-2xl font-bold'>Quản lý thể loại</h1>
@@ -80,42 +80,44 @@ const GenreAdminPage = () => {
           </button>
         </div>
 
-        <div className='bg-gray-800 rounded-lg overflow-hidden'>
-          <table className='w-full'>
-            <thead className='bg-gray-700'>
-              <tr>
-                <th className='px-6 py-4 text-left text-sm font-semibold'>STT</th>
-                <th className='px-6 py-4 text-left text-sm font-semibold'>Tên thể loại</th>
-                <th className='px-6 py-4 text-right text-sm font-semibold'>Thao tác</th>
-              </tr>
-            </thead>
-            <tbody className='divide-y divide-gray-700'>
-              {genres.map((genre, index) => (
-                <tr key={genre.id} className='hover:bg-gray-700 transition-colors'>
-                  <td className='px-6 py-4 text-sm'>{index + 1}</td>
-                  <td className='px-6 py-4 text-sm font-medium'>{genre.name}</td>
-                  <td className='px-6 py-4 text-right'>
-                    <div className='flex justify-end gap-2'>
-                      <button
-                        className='p-2 rounded-lg border border-gray-500 hover:bg-gray-600 transition-colors cursor-pointer'
-                        onClick={() => handleEdit(genre)}
-                        title='Chỉnh sửa'
-                      >
-                        <Pencil size={16} />
-                      </button>
-                      <button
-                        className='p-2 rounded-lg border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors cursor-pointer'
-                        onClick={() => handleDelete(genre.id, genre.name)}
-                        title='Xóa'
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
+        <div className='flex-1'>
+          <div className='bg-gray-800 rounded-lg overflow-hidden'>
+            <table className='w-full'>
+              <thead className='bg-gray-700'>
+                <tr>
+                  <th className='px-6 py-4 text-left text-sm font-semibold'>STT</th>
+                  <th className='px-6 py-4 text-left text-sm font-semibold'>Tên thể loại</th>
+                  <th className='px-6 py-4 text-right text-sm font-semibold'>Thao tác</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className='divide-y divide-gray-700'>
+                {genres.map((genre, index) => (
+                  <tr key={genre.id} className='hover:bg-gray-700 transition-colors'>
+                    <td className='px-6 py-4 text-sm'>{index + 1}</td>
+                    <td className='px-6 py-4 text-sm font-medium'>{genre.name}</td>
+                    <td className='px-6 py-4 text-right'>
+                      <div className='flex justify-end gap-2'>
+                        <button
+                          className='p-2 rounded-lg border border-gray-500 hover:bg-gray-600 transition-colors cursor-pointer'
+                          onClick={() => handleEdit(genre)}
+                          title='Chỉnh sửa'
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          className='p-2 rounded-lg border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors cursor-pointer'
+                          onClick={() => handleDelete(genre.id, genre.name)}
+                          title='Xóa'
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {genres.length === 0 && (

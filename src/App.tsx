@@ -17,10 +17,11 @@ import CommentAdminPage from './page/admin/CommentAdminPage'
 import GenreAdminPage from './page/admin/GenreAdminPage'
 import UserAdminPage from './page/admin/UserAdminPage'
 import CastAdminPage from './page/admin/CastAdminPage'
-import CreateCast from './page/admin/CreateCast'
+import CastDetaill from './page/admin/CastDetail'
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer } from 'react-toastify'
 import NotFound from './page/NotFound'
+import UserDetail from './page/admin/UserDetail'
 
 function App() {
   return (
@@ -45,13 +46,15 @@ function App() {
 
           {/* admin page */}
           <Route path='/admin' element={<AdminMain />}>
-          <Route index element={<Navigate to="dashboard" replace />} />
+            <Route index element={<Navigate to='dashboard' replace />} />
             <Route path='dashboard' element={<Dashboard />}></Route>
             <Route path='movies' element={<MovieAdminPage />}></Route>
             <Route path='cast' element={<CastAdminPage />}></Route>
-            <Route path='cast/create-cast' element={<CreateCast />}></Route>
-            <Route path='cast/edit-cast/:id' element={<CreateCast />}></Route>
+            <Route path='cast/create-cast' element={<CastDetaill />}></Route>
+            <Route path='cast/edit-cast/:id' element={<CastDetaill />}></Route>
             <Route path='users' element={<UserAdminPage />}></Route>
+            <Route path='users/create-user' element={<UserDetail />}></Route>
+            <Route path='users/edit-user/:id' element={<UserDetail />}></Route>
             <Route path='genres' element={<GenreAdminPage />}></Route>
             <Route path='comments' element={<CommentAdminPage />}></Route>
           </Route>

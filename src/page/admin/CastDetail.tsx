@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-const CreateCast = () => {
+const CastDetail = () => {
   const navigate = useNavigate()
   const [name, setName] = useState<string>('')
   const [imageUrl, setImageUrl] = useState<string>('')
@@ -12,9 +12,6 @@ const CreateCast = () => {
   const handleGoBack = () => {
     // handle go back to previous page
     navigate(-1)
-    if (!id) {
-      toast.info('Đã hủy thêm diễn viên')
-    }
   }
 
   const handleDelete = () => {
@@ -135,4 +132,4 @@ const CreateCast = () => {
   )
 }
 
-export default CreateCast
+export default CastDetail
