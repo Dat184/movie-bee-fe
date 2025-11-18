@@ -26,8 +26,8 @@ const UserAdminPage = () => {
       </div>
 
       <div className='flex-1'>
-        <div className='flex-1 bg-gray-800 rounded-lg overflow-hidden'>
-          <table className='w-full'>
+        <div className=' bg-gray-800 rounded-lg overflow-hidden'>
+          <table className='w-full '>
             <thead className='bg-gray-700'>
               <tr>
                 <th className='text-left p-4 text-sm font-semibold'>Avatar</th>

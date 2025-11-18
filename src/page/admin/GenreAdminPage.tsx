@@ -17,7 +17,11 @@ const GenreAdminPage = () => {
     { id: 3, name: 'Kinh dị' },
     { id: 4, name: 'Tình cảm' },
     { id: 5, name: 'Khoa học viễn tưởng' },
-    { id: 6, name: 'Khoa học viễn tưởng' }
+    { id: 6, name: 'Khoa học viễn tưởng' },
+    { id: 6, name: 'Khoa học viễn tưởng' },
+    { id: 6, name: 'Khoa học viễn tưởng' },
+    { id: 6, name: 'Khoa học viễn tưởng' },
+    { id: 6, name: 'Khoa học viễn tưởng' },
   ])
 
   const [isModalOpen, setIsModalOpen] = useState(false)

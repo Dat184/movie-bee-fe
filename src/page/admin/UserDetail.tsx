@@ -1,7 +1,10 @@
-import { ArrowLeft, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { ArrowLeft } from 'lucide-react'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import * as Yup from 'yup'
 
 interface User {
   id: number
@@ -10,19 +13,34 @@ interface User {
   avatarUrl: string
   role: 'Admin' | 'User'
   isVerified: boolean
+  firstName: string
+  lastName: string
 }
 
+const schema = Yup.object({
+  email: Yup.string().email('Invalid email format').required('Please enter your email'),
+  firstName: Yup.string().required('Please enter your first name'),
+  lastName: Yup.string().required('Please enter your last name'),
+  username: Yup.string().required('Please enter your username'),
+  avatarUrl: Yup.string().url('Invalid URL format'),
+  role: Yup.string().oneOf(['Admin', 'User']),
+  isVerified: Yup.boolean()
+})
+
 const UserDetail = () => {
-  const { id } = useParams<{ id: string }>()
+  const params = useParams<{ id: string }>()
+  const id = params.id
   const navigate = useNavigate()
 
-  const [formData, setFormData] = useState<User>({
-    id: 0,
-    email: '',
-    username: '',
-    avatarUrl: '',
-    role: 'User',
-    isVerified: false
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    reset,
+    watch
+  } = useForm({
+    mode: 'onChange',
+    resolver: yupResolver(schema)
   })
 
   useEffect(() => {
@@ -34,38 +52,28 @@ const UserDetail = () => {
         username: 'Nguyễn Văn A',
         avatarUrl: 'https://avatars.githubusercontent.com/u/59419099?v=4',
         role: 'User',
+        firstName: 'Nguyễn',
+        lastName: 'Văn A',
         isVerified: true
       }
-      setFormData(mockUser)
+      reset({
+        ...mockUser
+      })
     }
   }, [id])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const onSubmit = async (data: any) => {
+    if (isValid) {
+      if (id) {
+        toast.success(`Cập nhật người dùng thành công: ${JSON.stringify(data)}`)
+      } else {
+        toast.success(`Đã thêm người dùng mới thành công: ${JSON.stringify(data)}`)
+      }
 
-    if (!formData.email.trim() || !formData.username.trim()) {
-      toast.error('Vui lòng điền đầy đủ thông tin')
-      return
-    }
-
-    if (id) {
-      toast.success('Đã cập nhật người dùng thành công')
-    } else {
-      toast.success('Đã thêm người dùng mới thành công')
+      reset()
     }
 
     navigate('/admin/users')
-  }
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target
-
-    if (type === 'checkbox') {
-      const checked = (e.target as HTMLInputElement).checked
-      setFormData({ ...formData, [name]: checked })
-    } else {
-      setFormData({ ...formData, [name]: value })
-    }
   }
 
   const handleCancel = () => {
@@ -89,12 +97,12 @@ const UserDetail = () => {
 
       <div className='flex-1 flex items-start justify-center'>
         <div className='bg-gray-800 rounded-lg p-8 w-full max-w-2xl'>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             {/* Avatar Preview */}
             <div className='flex justify-center mb-8'>
               <div className='relative'>
                 <img
-                  src={formData.avatarUrl || 'https://via.placeholder.com/150'}
+                  src={watch('avatarUrl') || 'https://via.placeholder.com/150'}
                   alt='Avatar'
                   className='w-32 h-32 rounded-full object-cover border-4 border-gray-700'
                 />
@@ -105,35 +113,90 @@ const UserDetail = () => {
               {/* Email */}
               <div>
                 <label htmlFor='email' className='block mb-2 font-medium text-sm'>
-                  Email <span className='text-red-500'>*</span>
+                  Email
                 </label>
                 <input
                   type='email'
                   id='email'
-                  name='email'
                   className='w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 focus:outline-none focus:border-primary'
                   placeholder='Nhập email'
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
+                  {...register('email')}
                 />
+                {errors?.email && <div className='text-sm text-red-500'>{errors.email.message}</div>}
               </div>
 
               {/* Username */}
               <div>
                 <label htmlFor='username' className='block mb-2 font-medium text-sm'>
-                  Tên người dùng <span className='text-red-500'>*</span>
+                  Tên hiển thị
                 </label>
                 <input
                   type='text'
                   id='username'
-                  name='username'
                   className='w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 focus:outline-none focus:border-primary'
                   placeholder='Nhập tên người dùng'
-                  value={formData.username}
-                  onChange={handleChange}
-                  required
+                  {...register('username')}
                 />
+                {errors?.username && <div className='text-sm text-red-500'>{errors.username.message}</div>}
+              </div>
+
+              <div>
+                <label htmlFor='firstName' className='block mb-2 font-medium text-sm'>
+                  Họ
+                </label>
+                <input
+                  type='text'
+                  id='firstName'
+                  className='w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 focus:outline-none focus:border-primary'
+                  placeholder='Nhập tên người dùng'
+                  {...register('firstName')}
+                />
+                {errors?.firstName && <div className='text-sm text-red-500'>{errors.firstName.message}</div>}
+              </div>
+
+              <div>
+                <label htmlFor='lastName' className='block mb-2 font-medium text-sm'>
+                  Tên
+                </label>
+                <input
+                  type='text'
+                  id='lastName'
+                  className='w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 focus:outline-none focus:border-primary'
+                  placeholder='Nhập tên người dùng'
+                  {...register('lastName')}
+                />
+                {errors?.lastName && <div className='text-sm text-red-500'>{errors.lastName.message}</div>}
+              </div>
+
+              {/* Role - Chỉ xem */}
+              <div>
+                <label htmlFor='role' className='block mb-2 font-medium text-sm'>
+                  Vai trò
+                </label>
+                <input
+                  type='text'
+                  id='role'
+                  className='w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 cursor-not-allowed opacity-60'
+                  placeholder='Vai trò'
+                  {...register('role')}
+                  disabled
+                  readOnly
+                />
+              </div>
+
+              {/* Is Verified - Có thể thay đổi */}
+              <div>
+                <label htmlFor='isVerified' className='block mb-2 font-medium text-sm'>
+                  Trạng thái xác thực
+                </label>
+                <select
+                  id='isVerified'
+                  className='w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 focus:outline-none focus:border-primary cursor-pointer appearance-none'
+                  {...register('isVerified')}
+                >
+                  <option value='true'>Đã xác thực</option>
+                  <option value='false'>Chưa xác thực</option>
+                </select>
               </div>
             </div>
 

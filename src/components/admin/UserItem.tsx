@@ -1,13 +1,18 @@
 import { Pencil, Trash2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 export const UserItem = () => {
   const navigate = useNavigate()
   const handleEdit = () => {
     navigate('/admin/users/edit-user/1')
   }
+  const handleDelete = ({ id }: { id: number }) => {
+    toast.info(`Xóa người dùng thành công:` + id)
+    // Xử lý xóa người dùng ở đây
+  }
   return (
-    <tr className='hover:bg-gray-700 transition-colors' onClick={handleEdit}>
+    <tr className='hover:bg-gray-700 transition-colors'>
       <td className='p-4 text-sm'>
         <img
           src='https://avatars.githubusercontent.com/u/59419099?v=4'
@@ -33,12 +38,14 @@ export const UserItem = () => {
           <button
             className='p-2 rounded-lg border border-gray-500 hover:bg-gray-600 transition-colors cursor-pointer'
             title='Chỉnh sửa'
+            onClick={handleEdit}
           >
             <Pencil size={16} />
           </button>
           <button
             className='p-2 rounded-lg border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors cursor-pointer'
             title='Xóa'
+            onClick={() => handleDelete({ id: 1 })}
           >
             <Trash2 size={16} />
           </button>
