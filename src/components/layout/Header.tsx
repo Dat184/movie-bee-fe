@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { UserRound } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import logo from '../../assets/img/movie_bee_logo3.svg'
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -24,10 +25,9 @@ const Header = () => {
       }`}
     >
       {/* Logo */}
-      <NavLink
-        to='/'
-        className='logo w-48 h-12 bg-[url(./src/assets/img/movie_bee_logo3.svg)] bg-size-150 bg-center bg-no-repeat ml-10'
-      ></NavLink>
+      <NavLink to='/' className='ml-10'>
+        <img src={logo} alt='MovieBee Logo' className='w-48 h-12 object-contain' />
+      </NavLink>
       <div className='flex gap-x-10'>
         <NavLink to='/' className={({ isActive }) => (isActive ? 'text-primary' : '')}>
           Trang chủ

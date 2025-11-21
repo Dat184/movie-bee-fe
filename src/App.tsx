@@ -13,6 +13,7 @@ import WatchPage from './page/WatchPage'
 import Dashboard from './page/admin/DashboardPage'
 import AdminMain from './components/layout/admin/AdminMain'
 import MovieAdminPage from './page/admin/MovieAdminPage'
+import MovieDetail from './page/admin/MovieDetail'
 import CommentAdminPage from './page/admin/CommentAdminPage'
 import GenreAdminPage from './page/admin/GenreAdminPage'
 import UserAdminPage from './page/admin/UserAdminPage'
@@ -49,6 +50,8 @@ function App() {
             <Route index element={<Navigate to='dashboard' replace />} />
             <Route path='dashboard' element={<Dashboard />}></Route>
             <Route path='movies' element={<MovieAdminPage />}></Route>
+            <Route path='movies/new' element={<MovieDetail />}></Route>
+            <Route path='movies/:id' element={<MovieDetail />}></Route>
             <Route path='cast' element={<CastAdminPage />}></Route>
             <Route path='cast/create-cast' element={<CastDetaill />}></Route>
             <Route path='cast/edit-cast/:id' element={<CastDetaill />}></Route>

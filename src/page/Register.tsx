@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
+import loginBg from '../assets/img/login.jpg'
 
 const schema = Yup.object({
   email: Yup.string().email('Invalid email format').required('Please enter your email'),
@@ -42,7 +43,10 @@ const Register = () => {
   return (
     <div className='h-screen w-full flex justify-center items-center'>
       <div className='w-[800px] h-[600px] rounded-xl border-0 flex flex-row overflow-hidden'>
-        <div className='flex-1 bg-[url(./src/assets/img/login.jpg)] bg-cover bg-no-repeat p-2'></div>
+        <div
+          className='flex-1 p-2'
+          style={{ backgroundImage: `url(${loginBg})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}
+        ></div>
         <div className='flex-1 bg-[#1E2545] p-2'>
           <div className='flex flex-col justify-center items-start h-full p-12 gap-4'>
             <h1 className=' text-2xl font-semibold'>Đăng ký</h1>

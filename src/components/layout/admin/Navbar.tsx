@@ -1,5 +1,6 @@
 import useClickOutside from '../../../hook/useClickOutside'
 import { NavLink } from 'react-router-dom'
+import logo from '../../../assets/img/movie_bee_logo3.svg'
 
 const Navbar = () => {
   const { show, setShow, nodeRef } = useClickOutside()
@@ -7,8 +8,8 @@ const Navbar = () => {
   return (
     <div className='w-72 bg-gray-800 text-white p-4 flex flex-col h-screen fixed left-0 top-0'>
       {/* logo */}
-      <div className='flex justify-center items-center flex-row mb-8'>
-        <div className='logo w-38 h-12 bg-[url(./src/assets/img/movie_bee_logo3.svg)] bg-size-150 bg-center bg-no-repeat'></div>
+      <div className='flex justify-center items-center flex-row mb-8 gap-2'>
+        <img src={logo} alt='MovieBee Logo' className='w-38 h-12 object-contain' />
         <div className='text-gray-500'>ADMIN</div>
       </div>
       {/* Dashboard */}
@@ -69,7 +70,9 @@ const Navbar = () => {
           className='flex items-center gap-3 p-2 hover:bg-gray-700 rounded cursor-pointer'
           onClick={() => setShow(!show)}
         >
-          <img src='https://via.placeholder.com/40' alt='User avatar' className='w-10 h-10 rounded-full object-cover' />
+          <div className='w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center text-white font-semibold'>
+            A
+          </div>
           <div className='flex flex-col'>
             <span className='font-medium text-sm'>Admin User</span>
             <span className='text-xs text-gray-400'>admin@moviebee.com</span>
@@ -81,11 +84,9 @@ const Navbar = () => {
           <div className='absolute bottom-full left-0 right-0 mb-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg overflow-hidden'>
             {/* User Info Header */}
             <div className='flex items-center gap-3 p-3 border-b border-gray-700'>
-              <img
-                src='https://via.placeholder.com/40'
-                alt='User avatar'
-                className='w-10 h-10 rounded-full object-cover'
-              />
+              <div className='w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center text-white font-semibold'>
+                A
+              </div>
               <div className='flex flex-col'>
                 <span className='font-medium text-sm'>Admin User</span>
                 <span className='text-xs text-gray-400'>admin@moviebee.com</span>
