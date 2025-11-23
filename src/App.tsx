@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { Fragment } from 'react/jsx-runtime'
 import Main from './components/layout/Main'
@@ -23,8 +23,13 @@ import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer } from 'react-toastify'
 import NotFound from './page/NotFound'
 import UserDetail from './page/admin/UserDetail'
+import Profile from './page/Profile'
+import ProtectedRoute from './middleware/ProtectedRoute'
+import { useDispatch } from 'react-redux'
 
 function App() {
+  // Kiểm tra và lấy user từ cookie khi app khởi động
+
   return (
     <Fragment>
       <Suspense
@@ -35,6 +40,9 @@ function App() {
         <Routes>
           <Route element={<Main />}>
             <Route path='/' element={<Home />}></Route>
+            <Route element={<ProtectedRoute allowedRoles={['user']} />}>
+              <Route path='/profile' element={<Profile />}></Route>
+            </Route>
             <Route path='/movies' element={<MoviePage />}></Route>
             <Route path='/movies/:movieId' element={<MovieDetailPage />} />
             <Route path='/watch/:movieId' element={<WatchPage />} />

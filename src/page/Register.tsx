@@ -4,13 +4,16 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
 import loginBg from '../assets/img/login.jpg'
+import { useDispatch, useSelector } from 'react-redux'
+import { signIn } from '../redux/api_request/auth_api'
+import { use } from 'react'
+import Loading from '../components/Loading'
 
 const schema = Yup.object({
   email: Yup.string().email('Invalid email format').required('Please enter your email'),
   password: Yup.string().min(6, 'Password must be at least 6 characters').required('Please enter your password'),
   firstName: Yup.string().required('Please enter your first name'),
   lastName: Yup.string().required('Please enter your last name'),
-  username: Yup.string().required('Please enter your username'),
   rePassword: Yup.string()
     .oneOf([Yup.ref('password')], 'Passwords must match')
     .required('Please confirm your password')
@@ -27,17 +30,25 @@ const Register = () => {
     resolver: yupResolver(schema)
   })
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const isFetching = useSelector((state: any) => state.auth.register?.isFetching)
 
   const onSubmit = async (data: any) => {
     if (isValid) {
       // Handle successful login
-      toast.success(`Registration successful: ${JSON.stringify(data)}`)
+      const { firstName, lastName, email, password } = data
+      const user = { firstName, lastName, email, password }
+      localStorage.setItem('registerEmail', email)
+      await signIn(user, dispatch, navigate)
       reset()
-      navigate('/confirm-email')
     } else {
       // Handle login errors
       console.log('Login failed:', errors)
     }
+  }
+
+  if (isFetching) {
+    return <Loading />
   }
 
   return (
@@ -78,14 +89,6 @@ const Register = () => {
                 id='lastName'
               />
               {errors?.lastName && <div className='text-sm text-red-500'>{errors.lastName.message}</div>}
-              <input
-                type='text'
-                className='border border-solid border-[#ffffff10] rounded-md p-2 mt-2 w-full'
-                placeholder='Tên hiển thị'
-                {...register('username')}
-                id='username'
-              />
-              {errors?.username && <div className='text-sm text-red-500'>{errors.username.message}</div>}
               <input
                 type='email'
                 className='border border-solid border-[#ffffff10] rounded-md p-2 mt-2 w-full'

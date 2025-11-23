@@ -4,8 +4,11 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
 import loginBg from '../assets/img/login.jpg'
+import { useDispatch } from 'react-redux'
+import { confirmEmail } from '../redux/api_request/auth_api'
 
 const schema = Yup.object({
+  email: Yup.string().email('Invalid email format').required('Please enter your email'),
   otp: Yup.string().required('Please enter your OTP')
 })
 
@@ -20,16 +23,18 @@ const ConfirmEmail = () => {
     resolver: yupResolver(schema)
   })
   const navigate = useNavigate()
-
+  const dispatch = useDispatch()
+  const email = localStorage.getItem('registerEmail') || ''
   const onSubmit = async (data: any) => {
     if (isValid) {
       // Handle successful login
-      toast.success('Xác thực email thành công! Vui lòng đăng nhập.')
+      const { otp } = data
+      await confirmEmail(email, otp, navigate, dispatch)
+      localStorage.removeItem('registerEmail')
       reset()
-      navigate('/login')
     } else {
       // Handle login errors
-      console.log('Login failed:', errors)
+      console.log('Confirm email failed:', errors)
     }
   }
 
@@ -55,6 +60,16 @@ const ConfirmEmail = () => {
               </a>
             </p>
             <form onSubmit={handleSubmit(onSubmit)}>
+              <input
+                type='email'
+                className='border border-solid border-[#ffffff10] rounded-md p-2 mt-2 w-full'
+                placeholder='Nhập email'
+                {...register('email')}
+                id='email'
+                defaultValue={email}
+              />
+              {errors?.email && <div className='text-sm text-red-500'>{errors.email.message}</div>}
+
               <input
                 type='text'
                 className='border border-solid border-[#ffffff10] rounded-md p-2 mt-2 w-full'

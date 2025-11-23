@@ -3,6 +3,9 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 import loginBg from '../assets/img/login.jpg'
+import { login } from '../redux/api_request/auth_api'
+import { useDispatch } from 'react-redux'
+import GoogleLoginBtn from '../components/ui/GoogleLoginBtn'
 
 const schema = Yup.object({
   email: Yup.string().email('Invalid email format').required('Please enter your email'),
@@ -20,11 +23,14 @@ const Login = () => {
     resolver: yupResolver(schema)
   })
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+
+  
 
   const onSubmit = async (data: any) => {
     if (isValid) {
       // Handle successful login
-      alert(`login successful: ${data.email} + ${data.password}`)
+      await login(data, dispatch, navigate)
       reset()
     } else {
       // Handle login errors
@@ -79,6 +85,17 @@ const Login = () => {
                 Đăng nhập
               </button>
             </form>
+
+            {/* Divider */}
+            <div className='w-full flex items-center gap-4 my-2'>
+              <div className='flex-1 h-px bg-white/20'></div>
+              <span className='text-gray-400 text-sm'>hoặc</span>
+              <div className='flex-1 h-px bg-white/20'></div>
+            </div>
+
+            {/* Google Login Button */}
+            <GoogleLoginBtn />
+
             <div onClick={() => navigate('/confirm-email')} className='hover:text-primary cursor-pointer'>
               Xác thực email
             </div>

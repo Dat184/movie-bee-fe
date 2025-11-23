@@ -1,12 +1,26 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { UserRound } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { UserRound, ChevronDown, User, LogOut } from 'lucide-react'
+import { use, useEffect, useState } from 'react'
 import logo from '../../assets/img/movie_bee_logo3.svg'
+import { useSelector, useDispatch } from 'react-redux'
+import useClickOutside from '../../hook/useClickOutside'
+import { logout, profile } from '../../redux/api_request/auth_api'
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false)
+  const user = useSelector((state: any) => state.auth.profile?.userInfo)
+  const { show, setShow, nodeRef } = useClickOutside('.user-dropdown-trigger')
+  const dispatch = useDispatch()
 
   const navigate = useNavigate()
+
+  useEffect(() => {
+    profile(dispatch)
+  }, [dispatch])
+  const handleLogout = () => {
+    logout(dispatch, navigate)
+    setShow(false)
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,6 +31,8 @@ const Header = () => {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  console.log(user)
 
   return (
     <header
@@ -39,15 +55,53 @@ const Header = () => {
           Liên hệ
         </NavLink>
       </div>
-      <div
-        className='flex gap-x-3 items-center cursor-pointer bg-white/80 text-black py-2 px-4 rounded-full hover:bg-white'
-        onClick={() => {
-          navigate('/login')
-        }}
-      >
-        <UserRound />
-        <p className='font-medium'>Thành viên</p>
-      </div>
+      {user ? (
+        <div className='relative' ref={nodeRef}>
+          <div
+            className='user-dropdown-trigger flex gap-x-3 items-center cursor-pointer bg-white/80 text-black py-2 px-4 rounded-full hover:bg-white'
+            onClick={() => setShow(!show)}
+          >
+            <img src={user.avatar} alt='user avatar' className='w-9 h-9 rounded-full' />
+            <p className='font-medium'>
+              {user.firstName} {user.lastName}
+            </p>
+            <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${show ? 'rotate-180' : ''}`} />
+          </div>
+
+          {/* Dropdown Menu */}
+          {show && (
+            <div className='absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 text-black z-[100] border border-gray-200'>
+              <button
+                onClick={() => {
+                  navigate('/profile')
+                  setShow(false)
+                }}
+                className='w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-x-2 transition-colors'
+              >
+                <User className='w-4 h-4' />
+                <span>Trang cá nhân</span>
+              </button>
+              <button
+                onClick={handleLogout}
+                className='w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-x-2 transition-colors text-red-600'
+              >
+                <LogOut className='w-4 h-4' />
+                <span>Đăng xuất</span>
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div
+          className='flex gap-x-3 items-center cursor-pointer bg-white/80 text-black py-2 px-4 rounded-full hover:bg-white'
+          onClick={() => {
+            navigate('/login')
+          }}
+        >
+          <UserRound />
+          <p className='font-medium'>Thành viên</p>
+        </div>
+      )}
     </header>
   )
 }
