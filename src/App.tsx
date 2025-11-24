@@ -40,7 +40,7 @@ function App() {
         <Routes>
           <Route element={<Main />}>
             <Route path='/' element={<Home />}></Route>
-            <Route element={<ProtectedRoute allowedRoles={['user']} />}>
+            <Route element={<ProtectedRoute allowedRoles={['user', 'admin']} />}>
               <Route path='/profile' element={<Profile />}></Route>
             </Route>
             <Route path='/movies' element={<MoviePage />}></Route>
@@ -55,19 +55,21 @@ function App() {
 
           {/* admin page */}
           <Route path='/admin' element={<AdminMain />}>
-            <Route index element={<Navigate to='dashboard' replace />} />
-            <Route path='dashboard' element={<Dashboard />}></Route>
-            <Route path='movies' element={<MovieAdminPage />}></Route>
-            <Route path='movies/new' element={<MovieDetail />}></Route>
-            <Route path='movies/:id' element={<MovieDetail />}></Route>
-            <Route path='cast' element={<CastAdminPage />}></Route>
-            <Route path='cast/create-cast' element={<CastDetaill />}></Route>
-            <Route path='cast/edit-cast/:id' element={<CastDetaill />}></Route>
-            <Route path='users' element={<UserAdminPage />}></Route>
-            <Route path='users/create-user' element={<UserDetail />}></Route>
-            <Route path='users/edit-user/:id' element={<UserDetail />}></Route>
-            <Route path='genres' element={<GenreAdminPage />}></Route>
-            <Route path='comments' element={<CommentAdminPage />}></Route>
+            <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+              <Route index element={<Navigate to='dashboard' replace />} />
+              <Route path='dashboard' element={<Dashboard />}></Route>
+              <Route path='movies' element={<MovieAdminPage />}></Route>
+              <Route path='movies/new' element={<MovieDetail />}></Route>
+              <Route path='movies/:id' element={<MovieDetail />}></Route>
+              <Route path='cast' element={<CastAdminPage />}></Route>
+              <Route path='cast/create-cast' element={<CastDetaill />}></Route>
+              <Route path='cast/edit-cast/:id' element={<CastDetaill />}></Route>
+              <Route path='users' element={<UserAdminPage />}></Route>
+              <Route path='users/create-user' element={<UserDetail />}></Route>
+              <Route path='users/edit-user/:id' element={<UserDetail />}></Route>
+              <Route path='genres' element={<GenreAdminPage />}></Route>
+              <Route path='comments' element={<CommentAdminPage />}></Route>
+            </Route>
           </Route>
         </Routes>
       </Suspense>

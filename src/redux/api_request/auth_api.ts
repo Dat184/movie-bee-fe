@@ -36,7 +36,7 @@ export const logout = async (dispatch: any, navigate: any) => {
   try {
     await axiosInstance.post('/auth/logout')
     dispatch(logoutSuccess())
-    navigate('/')
+    navigate('/login')
     toast.success('Đăng xuất thành công!')
   } catch (error: any) {
     dispatch(logoutFailure())
@@ -49,7 +49,6 @@ export const profile = async (dispatch: any) => {
   try {
     const res = await axiosInstance.get('/auth/profile')
     dispatch(profileSuccess(res.data.result))
-    dispatch(loginSuccess(res.data.result))
   } catch (error: any) {
     dispatch(profileFailure())
   }

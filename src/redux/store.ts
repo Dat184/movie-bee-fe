@@ -3,22 +3,25 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import storage from 'redux-persist/lib/storage'
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist'
 import authReducer from './slice/authSlice'
+import userReducer from './slice/userSlice'
 
 const authPersistConfig = {
   key: 'auth',
-  storage
+  storage,
+  whitelist: ['login'] // MẤU CHỐT: Chỉ whitelist 'login' tại đây
 }
-
-const rootReducer = combineReducers({
-  auth: persistReducer(authPersistConfig, authReducer)
-})
 
 const persistConfig = {
   key: 'root',
   version: 1,
   storage,
-  whitelist: []
+  blacklist: ['auth', 'user']
 }
+
+const rootReducer = combineReducers({
+  auth: persistReducer(authPersistConfig, authReducer),
+  user: userReducer
+})
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 

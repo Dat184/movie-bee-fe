@@ -8,14 +8,15 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
-  const user = useSelector((state: any) => state.auth.login?.currentUser)
+  const user = useSelector((state: any) => state.auth.login.currentUser?.user)
   // console.log('User from App:', user)
   const userRole = user?.role
 
   // console.log('User role:', userRole)
 
   if (!allowedRoles.includes(userRole !== null ? userRole : '')) {
-    return <Navigate to='/login' replace />
+    toast.error('Bạn không có quyền truy cập trang này.')
+    return <Navigate to='/' replace />
   }
 
   return <Outlet />

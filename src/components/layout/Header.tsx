@@ -11,12 +11,14 @@ const Header = () => {
   const user = useSelector((state: any) => state.auth.profile?.userInfo)
   const { show, setShow, nodeRef } = useClickOutside('.user-dropdown-trigger')
   const dispatch = useDispatch()
-
   const navigate = useNavigate()
 
   useEffect(() => {
     profile(dispatch)
   }, [dispatch])
+
+  // console.log('user profile:', user)
+
   const handleLogout = () => {
     logout(dispatch, navigate)
     setShow(false)
@@ -31,8 +33,6 @@ const Header = () => {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
-
-  console.log(user)
 
   return (
     <header

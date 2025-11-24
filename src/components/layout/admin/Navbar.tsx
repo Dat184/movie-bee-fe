@@ -1,10 +1,19 @@
 import useClickOutside from '../../../hook/useClickOutside'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import logo from '../../../assets/img/movie_bee_logo3.svg'
+import { useDispatch, useSelector } from 'react-redux'
+import { logout } from '../../../redux/api_request/auth_api'
 
 const Navbar = () => {
   const { show, setShow, nodeRef } = useClickOutside()
+  const admin = useSelector((state: any) => state.auth.login.currentUser?.user)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
+  const handleLogout = () => {
+    logout(dispatch, navigate)
+    setShow(false)
+  }
   return (
     <div className='w-72 bg-gray-800 text-white p-4 flex flex-col h-screen fixed left-0 top-0'>
       {/* logo */}
@@ -70,12 +79,10 @@ const Navbar = () => {
           className='flex items-center gap-3 p-2 hover:bg-gray-700 rounded cursor-pointer'
           onClick={() => setShow(!show)}
         >
-          <div className='w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center text-white font-semibold'>
-            A
-          </div>
+          <img src={admin?.avatar} alt='' className='w-10 h-10 rounded-full object-cover' />
           <div className='flex flex-col'>
-            <span className='font-medium text-sm'>Admin User</span>
-            <span className='text-xs text-gray-400'>admin@moviebee.com</span>
+            <span className='font-medium text-sm'>{admin.firstName + ' ' + admin.lastName}</span>
+            <span className='text-xs text-gray-400'>{admin?.email}</span>
           </div>
         </div>
 
@@ -84,18 +91,19 @@ const Navbar = () => {
           <div className='absolute bottom-full left-0 right-0 mb-2 bg-gray-900 border border-gray-700 rounded-lg shadow-lg overflow-hidden'>
             {/* User Info Header */}
             <div className='flex items-center gap-3 p-3 border-b border-gray-700'>
-              <div className='w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center text-white font-semibold'>
-                A
-              </div>
+              <img src={admin?.avatar} alt='' className='w-10 h-10 rounded-full object-cover' />
               <div className='flex flex-col'>
-                <span className='font-medium text-sm'>Admin User</span>
-                <span className='text-xs text-gray-400'>admin@moviebee.com</span>
+                <span className='font-medium text-sm'>{admin.firstName + ' ' + admin.lastName}</span>
+                <span className='text-xs text-gray-400'>{admin?.email}</span>
               </div>
             </div>
 
             {/* Menu Items */}
             <div className='p-2'>
-              <div className='flex items-center gap-3 px-4 py-2 hover:bg-gray-700  cursor-pointer text-red-400 rounded'>
+              <button
+                className='flex items-center gap-3 px-4 py-2 hover:bg-gray-700  cursor-pointer text-red-400 rounded w-full'
+                onClick={handleLogout}
+              >
                 <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                   <path
                     strokeLinecap='round'
@@ -105,7 +113,7 @@ const Navbar = () => {
                   />
                 </svg>
                 <span className='text-sm'>Đăng xuất</span>
-              </div>
+              </button>
             </div>
           </div>
         )}
