@@ -1,13 +1,12 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
 import * as Yup from 'yup'
 import loginBg from '../assets/img/login.jpg'
 import { useDispatch, useSelector } from 'react-redux'
 import { signIn } from '../redux/api_request/auth_api'
-import { use } from 'react'
 import Loading from '../components/Loading'
+import type { UserCreate } from '../types'
 
 const schema = Yup.object({
   email: Yup.string().email('Invalid email format').required('Please enter your email'),
@@ -33,7 +32,7 @@ const Register = () => {
   const dispatch = useDispatch()
   const isFetching = useSelector((state: any) => state.auth.register?.isFetching)
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: UserCreate) => {
     if (isValid) {
       // Handle successful login
       const { firstName, lastName, email, password } = data

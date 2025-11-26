@@ -6,6 +6,7 @@ import loginBg from '../assets/img/login.jpg'
 import { login } from '../redux/api_request/auth_api'
 import { useDispatch } from 'react-redux'
 import GoogleLoginBtn from '../components/ui/GoogleLoginBtn'
+import type { userLogin } from '../types'
 
 const schema = Yup.object({
   email: Yup.string().email('Invalid email format').required('Please enter your email'),
@@ -27,7 +28,7 @@ const Login = () => {
 
   
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: userLogin) => {
     if (isValid) {
       // Handle successful login
       await login(data, dispatch, navigate)

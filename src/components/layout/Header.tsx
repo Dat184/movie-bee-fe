@@ -17,10 +17,9 @@ const Header = () => {
     profile(dispatch)
   }, [dispatch])
 
-  // console.log('user profile:', user)
-
   const handleLogout = () => {
     logout(dispatch, navigate)
+    profile(dispatch)
     setShow(false)
   }
 
@@ -52,7 +51,7 @@ const Header = () => {
           Danh sách phim
         </NavLink>
         <NavLink to='/contact' className={({ isActive }) => (isActive ? 'text-primary' : '')}>
-          Liên hệ
+          Giới thiệu
         </NavLink>
       </div>
       {user ? (

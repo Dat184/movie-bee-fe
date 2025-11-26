@@ -8,7 +8,7 @@ import Register from './page/Register'
 import ConfirmEmail from './page/ConfirmEmail'
 import MoviePage from './page/MoviePage'
 import MovieDetailPage from './page/MovieDetailPage'
-import ContactPage from './page/ContactPage'
+import AboutUs from './page/AboutUs'
 import WatchPage from './page/WatchPage'
 import Dashboard from './page/admin/DashboardPage'
 import AdminMain from './components/layout/admin/AdminMain'
@@ -46,7 +46,7 @@ function App() {
             <Route path='/movies' element={<MoviePage />}></Route>
             <Route path='/movies/:movieId' element={<MovieDetailPage />} />
             <Route path='/watch/:movieId' element={<WatchPage />} />
-            <Route path='/contact' element={<ContactPage />}></Route>
+            <Route path='/contact' element={<AboutUs />}></Route>
             <Route path='/*' element={<NotFound />}></Route>
           </Route>
           <Route path='/login' element={<Login />}></Route>

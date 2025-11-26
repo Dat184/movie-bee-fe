@@ -5,32 +5,36 @@ import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
+import type { User, UserCreate, UserUpdate } from '../../types'
+import { createUser, getUserById, updateUser } from '../../redux/api_request/user_api'
+import { useDispatch, useSelector } from 'react-redux'
 
-interface User {
-  id: number
-  email: string
-  username: string
-  avatarUrl: string
-  role: 'Admin' | 'User'
-  isVerified: boolean
-  firstName: string
-  lastName: string
-}
+const createSchema = Yup.object({
+  email: Yup.string().email('Invalid email format').required('Please enter your email'),
+  password: Yup.string().min(6, 'Password must be at least 6 characters').required('Please enter your password'),
+  firstName: Yup.string().required('Please enter your first name'),
+  lastName: Yup.string().required('Please enter your last name'),
+  avatar: Yup.string().url('Invalid URL format'),
+  role: Yup.string(),
+  isVerified: Yup.boolean()
+})
 
-const schema = Yup.object({
+const editSchema = Yup.object({
   email: Yup.string().email('Invalid email format').required('Please enter your email'),
   firstName: Yup.string().required('Please enter your first name'),
   lastName: Yup.string().required('Please enter your last name'),
-  username: Yup.string().required('Please enter your username'),
-  avatarUrl: Yup.string().url('Invalid URL format'),
-  role: Yup.string().oneOf(['Admin', 'User']),
+  avatar: Yup.string().url('Invalid URL format'),
+  role: Yup.string(),
   isVerified: Yup.boolean()
 })
 
 const UserDetail = () => {
   const params = useParams<{ id: string }>()
   const id = params.id
+  const userDetail = useSelector((state: any) => state.user.getUser?.data?.result)
+  const isFeitching = useSelector((state: any) => state.user.getUser.isFetching)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const {
     register,
@@ -38,39 +42,68 @@ const UserDetail = () => {
     formState: { errors, isValid },
     reset,
     watch
-  } = useForm({
+  } = useForm<any>({
     mode: 'onChange',
-    resolver: yupResolver(schema)
+    resolver: yupResolver(id ? editSchema : createSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      firstName: '',
+      lastName: '',
+      avatar: '',
+      isVerified: false,
+      role: 'User'
+    }
   })
 
+  // Fetch user data khi có id
   useEffect(() => {
     if (id) {
-      // Giả lập fetch data từ API
-      const mockUser: User = {
-        id: parseInt(id),
-        email: 'thanhnguyendat184@gmail.com',
-        username: 'Nguyễn Văn A',
-        avatarUrl: 'https://avatars.githubusercontent.com/u/59419099?v=4',
-        role: 'User',
-        firstName: 'Nguyễn',
-        lastName: 'Văn A',
-        isVerified: true
-      }
+      getUserById(id, dispatch)
+    } else {
+      // Reset form về trạng thái mặc định khi tạo mới
       reset({
-        ...mockUser
+        email: '',
+        password: '',
+        firstName: '',
+        lastName: '',
+        avatar: '',
+        isVerified: false,
+        role: 'User'
       })
     }
-  }, [id])
+  }, [id, dispatch, reset])
+
+  // Update form khi userDetail thay đổi (chỉ khi đang edit)
+  useEffect(() => {
+    if (id && userDetail) {
+      reset({
+        email: userDetail.email || '',
+        password: '',
+        firstName: userDetail.firstName || '',
+        lastName: userDetail.lastName || '',
+        avatar: userDetail.avatar || '',
+        isVerified: userDetail.isVerified || false,
+        role: userDetail.role || 'User'
+      })
+    }
+  }, [id, userDetail, reset])
 
   const onSubmit = async (data: any) => {
     if (isValid) {
       if (id) {
-        toast.success(`Cập nhật người dùng thành công: ${JSON.stringify(data)}`)
+        const updateUserData: UserUpdate = {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email
+        }
+        await updateUser(id, updateUserData, dispatch)
       } else {
-        toast.success(`Đã thêm người dùng mới thành công: ${JSON.stringify(data)}`)
+        await createUser(data, dispatch)
       }
-
       reset()
+    } else {
+      toast.error('Vui lòng kiểm tra lại thông tin người dùng.')
     }
 
     navigate('/admin/users')
@@ -78,6 +111,10 @@ const UserDetail = () => {
 
   const handleCancel = () => {
     navigate('/admin/users')
+  }
+
+  if (isFeitching) {
+    return <div>Loading...</div>
   }
 
   return (
@@ -99,15 +136,17 @@ const UserDetail = () => {
         <div className='bg-gray-800 rounded-lg p-8 w-full max-w-2xl'>
           <form onSubmit={handleSubmit(onSubmit)}>
             {/* Avatar Preview */}
-            <div className='flex justify-center mb-8'>
-              <div className='relative'>
-                <img
-                  src={watch('avatarUrl') || 'https://via.placeholder.com/150'}
-                  alt='Avatar'
-                  className='w-32 h-32 rounded-full object-cover border-4 border-gray-700'
-                />
+            {watch('avatar') && (
+              <div className='flex justify-center mb-8'>
+                <div className='relative'>
+                  <img
+                    src={watch('avatar')}
+                    alt='Avatar'
+                    className='w-32 h-32 rounded-full object-cover border-4 border-gray-700'
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             <div className='space-y-6'>
               {/* Email */}
@@ -122,23 +161,27 @@ const UserDetail = () => {
                   placeholder='Nhập email'
                   {...register('email')}
                 />
-                {errors?.email && <div className='text-sm text-red-500'>{errors.email.message}</div>}
+                {errors?.email && <div className='text-sm text-red-500'>{String(errors.email.message)}</div>}
               </div>
 
+              {/* Password */}
+              {!id && (
+                <div>
+                  <label htmlFor='password' className='block mb-2 font-medium text-sm'>
+                    Password
+                  </label>
+                  <input
+                    type='password'
+                    id='password'
+                    className='w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 focus:outline-none focus:border-primary'
+                    placeholder='Nhập password'
+                    {...register('password')}
+                  />
+                  {errors?.password && <div className='text-sm text-red-500'>{String(errors.password.message)}</div>}
+                </div>
+              )}
+
               {/* Username */}
-              <div>
-                <label htmlFor='username' className='block mb-2 font-medium text-sm'>
-                  Tên hiển thị
-                </label>
-                <input
-                  type='text'
-                  id='username'
-                  className='w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 focus:outline-none focus:border-primary'
-                  placeholder='Nhập tên người dùng'
-                  {...register('username')}
-                />
-                {errors?.username && <div className='text-sm text-red-500'>{errors.username.message}</div>}
-              </div>
 
               <div>
                 <label htmlFor='firstName' className='block mb-2 font-medium text-sm'>
@@ -151,7 +194,7 @@ const UserDetail = () => {
                   placeholder='Nhập tên người dùng'
                   {...register('firstName')}
                 />
-                {errors?.firstName && <div className='text-sm text-red-500'>{errors.firstName.message}</div>}
+                {errors?.firstName && <div className='text-sm text-red-500'>{String(errors.firstName.message)}</div>}
               </div>
 
               <div>
@@ -165,7 +208,7 @@ const UserDetail = () => {
                   placeholder='Nhập tên người dùng'
                   {...register('lastName')}
                 />
-                {errors?.lastName && <div className='text-sm text-red-500'>{errors.lastName.message}</div>}
+                {errors?.lastName && <div className='text-sm text-red-500'>{String(errors.lastName.message)}</div>}
               </div>
 
               {/* Role - Chỉ xem */}
@@ -177,7 +220,7 @@ const UserDetail = () => {
                   type='text'
                   id='role'
                   className='w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 cursor-not-allowed opacity-60'
-                  placeholder='Vai trò'
+                  placeholder={watch('role')}
                   {...register('role')}
                   disabled
                   readOnly
@@ -193,6 +236,7 @@ const UserDetail = () => {
                   id='isVerified'
                   className='w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 focus:outline-none focus:border-primary cursor-pointer appearance-none'
                   {...register('isVerified')}
+                  disabled={id ? true : false}
                 >
                   <option value='true'>Đã xác thực</option>
                   <option value='false'>Chưa xác thực</option>

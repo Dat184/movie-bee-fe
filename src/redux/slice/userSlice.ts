@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { get } from 'react-hook-form'
+import type { User } from '../../types'
 
 const userSlice = createSlice({
   name: 'user',
@@ -17,7 +18,7 @@ const userSlice = createSlice({
     getAllUsers: {
       isFetching: false,
       error: false,
-      users: [],
+      users: [] as User[],
       meta: {
         current: 1,
         pageSize: 10,
@@ -26,6 +27,11 @@ const userSlice = createSlice({
       }
     },
     deleteUser: {
+      isFetching: false,
+      error: false,
+      success: false
+    },
+    createUser: {
       isFetching: false,
       error: false,
       success: false
@@ -71,8 +77,8 @@ const userSlice = createSlice({
     getAllUsersSuccess: (state, action) => {
       state.getAllUsers.isFetching = false
       state.getAllUsers.error = false
-      state.getAllUsers.users = action.payload.result
-      state.getAllUsers.meta = action.payload.meta
+      state.getAllUsers.users = action.payload.result.result
+      state.getAllUsers.meta = action.payload.result.meta
     },
     getAllUsersFailure: (state) => {
       state.getAllUsers.isFetching = false
@@ -85,15 +91,31 @@ const userSlice = createSlice({
       state.deleteUser.error = false
       state.deleteUser.success = false
     },
-    deleteUserSuccess: (state) => {
+    deleteUserSuccess: (state, action) => {
       state.deleteUser.isFetching = false
       state.deleteUser.error = false
       state.deleteUser.success = true
+      state.getAllUsers.users = state.getAllUsers.users.filter((user) => user._id !== action.payload)
     },
     deleteUserFailure: (state) => {
       state.deleteUser.isFetching = false
       state.deleteUser.error = true
       state.deleteUser.success = false
+    },
+    createUserStart: (state) => {
+      state.createUser.isFetching = true
+      state.createUser.error = false
+      state.createUser.success = false
+    },
+    createUserSuccess: (state) => {
+      state.createUser.isFetching = false
+      state.createUser.error = false
+      state.createUser.success = true
+    },
+    createUserFailure: (state) => {
+      state.createUser.isFetching = false
+      state.createUser.error = true
+      state.createUser.success = false
     }
   }
 })
@@ -113,6 +135,10 @@ export const {
 
   deleteUserStart,
   deleteUserSuccess,
-  deleteUserFailure
+  deleteUserFailure,
+
+  createUserStart,
+  createUserSuccess,
+  createUserFailure
 } = userSlice.actions
 export default userSlice.reducer

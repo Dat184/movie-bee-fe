@@ -1,4 +1,28 @@
 export interface UserUpdate {
   firstName?: string
   lastName?: string
+  email?: string
+}
+
+export interface User {
+  _id: string
+  email: string
+  firstName: string
+  lastName: string
+  avatar: string
+  role: string
+  isVerified: boolean
+}
+
+export interface UserCreate {
+  email: string
+  password: string
+  firstName: string
+  lastName: string
+  isVerified?: boolean
+}
+
+export interface userLogin {
+  email: string
+  password: string
 }

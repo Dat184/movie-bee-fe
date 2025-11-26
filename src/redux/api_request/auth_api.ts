@@ -17,8 +17,9 @@ import {
 } from '../slice/authSlice'
 import axiosInstance from '../../axios/axios.interceptor'
 import { toast } from 'react-toastify'
+import type { UserCreate, userLogin } from '../../types'
 
-export const login = async (user: any, dispatch: any, navigate: any) => {
+export const login = async (user: userLogin, dispatch: any, navigate: any) => {
   dispatch(loginStart())
   try {
     const res = await axiosInstance.post('/auth/login', user)
@@ -36,8 +37,8 @@ export const logout = async (dispatch: any, navigate: any) => {
   try {
     await axiosInstance.post('/auth/logout')
     dispatch(logoutSuccess())
-    navigate('/login')
     toast.success('Đăng xuất thành công!')
+    await profile(dispatch)
   } catch (error: any) {
     dispatch(logoutFailure())
     toast.error('Đăng xuất thất bại. Vui lòng thử lại.')
@@ -54,7 +55,7 @@ export const profile = async (dispatch: any) => {
   }
 }
 
-export const signIn = async (user: any, dispatch: any, navigate: any) => {
+export const signIn = async (user: UserCreate, dispatch: any, navigate: any) => {
   dispatch(registerStart())
   try {
     await axiosInstance.post('/auth/register', user)

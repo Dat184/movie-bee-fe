@@ -3,12 +3,31 @@ import Stack from '@mui/material/Stack'
 import { Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { UserItem } from '../../components/admin/UserItem'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
+import { getAllUsers } from '../../redux/api_request/user_api'
+import type { User } from '../../types'
+import { set } from 'react-hook-form'
 
 const UserAdminPage = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const listUsers = useSelector((state: any) => state.user.getAllUsers?.users)
+  const totalPages = useSelector((state: any) => state.user.getAllUsers?.meta.pages)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+
+  useEffect(() => {
+    getAllUsers(currentPage, 6, dispatch)
+  }, [dispatch, currentPage])
+
   const handleCreateUser = () => {
     navigate('/admin/users/create-user')
   }
+
+  const handleChangePage = (event: React.ChangeEvent<unknown>, page: number) => {
+    setCurrentPage(page)
+  }
+
   return (
     <section className='w-full min-h-screen px-5 py-10 flex flex-col'>
       <div className='flex flex-row justify-between items-center mb-10'>
@@ -38,54 +57,9 @@ const UserAdminPage = () => {
               </tr>
             </thead>
             <tbody className='divide-y divide-gray-700'>
-              {/* <tr className='hover:bg-gray-700 transition-colors'>
-              <td className='p-4 text-sm'>
-                <img
-                  src='https://avatars.githubusercontent.com/u/59419099?v=4'
-                  alt='Avatar'
-                  className='w-10 h-10 rounded-full object-cover'
-                />
-              </td>
-              <td className='p-4 text-sm'>thanhnguyendat184@gmail.com</td>
-              <td className='p-4 text-sm'>User</td>
-              <td className='px-6 py-4 text-center'>
-                <span
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                    false
-                      ? 'bg-red-500/20 text-red-500 border border-red-500'
-                      : 'bg-green-500/20 text-green-500 border border-green-500'
-                  }`}
-                >
-                  {false ? 'Vi phạm' : 'Hợp lệ'}
-                </span>
-              </td>
-              <td className='px-6 py-4 text-right'>
-                <div className='flex justify-end gap-2'>
-                  <button
-                    className='p-2 rounded-lg border border-gray-500 hover:bg-gray-600 transition-colors cursor-pointer'
-                    title='Chỉnh sửa'
-                  >
-                    <Pencil size={16} />
-                  </button>
-                  <button
-                    className='p-2 rounded-lg border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors cursor-pointer'
-                    title='Xóa'
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </td>
-            </tr> */}
-              <UserItem></UserItem>
-              <UserItem></UserItem>
-              <UserItem></UserItem>
-              <UserItem></UserItem>
-              <UserItem></UserItem>
-              <UserItem></UserItem>
-              <UserItem></UserItem>
-              <UserItem></UserItem>
-              <UserItem></UserItem>
-              <UserItem></UserItem>
+              {listUsers?.map((user: User) => (
+                <UserItem key={user._id} user={user}></UserItem>
+              ))}
             </tbody>
           </table>
         </div>
@@ -94,7 +68,9 @@ const UserAdminPage = () => {
       <div className='mt-8 flex justify-center items-center'>
         <Stack spacing={2}>
           <Pagination
-            count={10}
+            count={totalPages}
+            page={currentPage}
+            onChange={handleChangePage}
             color='primary'
             sx={{
               '& .MuiPaginationItem-root': {
