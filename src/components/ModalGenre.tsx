@@ -2,7 +2,6 @@ import { X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { createGenre, getGenreById, updateGenre } from '../redux/api_request/genre_api'
-import { clearGenreData } from '../redux/slice/genreSlice'
 
 interface ModalGenreProps {
   isOpen: boolean
@@ -20,7 +19,7 @@ const ModalGenre = ({ isOpen, onClose, genreId }: ModalGenreProps) => {
       // Fetch genre details if editing
       getGenreById(genreId, dispatch)
     } else {
-      dispatch(clearGenreData())
+      setGenreName('')
     }
   }, [isOpen])
 
