@@ -1,37 +1,46 @@
 import { X } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
-import type { Genre } from '../page/admin/GenreAdminPage'
+import { useDispatch, useSelector } from 'react-redux'
+import { createGenre, getGenreById, updateGenre } from '../redux/api_request/genre_api'
+import { clearGenreData } from '../redux/slice/genreSlice'
 
 interface ModalGenreProps {
   isOpen: boolean
-  editingGenre: Genre | null
   onClose: () => void
-  onSubmit: (name: string, genre: Genre | null) => void
+  genreId?: string
 }
 
-const ModalGenre = ({ isOpen, editingGenre, onClose, onSubmit }: ModalGenreProps) => {
-  const [genreName, setGenreName] = useState('')
+const ModalGenre = ({ isOpen, onClose, genreId }: ModalGenreProps) => {
+  const genre = useSelector((state: any) => state.genre.getGenreById?.data)
+  const [genreName, setGenreName] = useState<string>(genre?.name || '')
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    if (editingGenre) {
-      setGenreName(editingGenre.name)
+    if (genreId) {
+      // Fetch genre details if editing
+      getGenreById(genreId, dispatch)
     } else {
-      setGenreName('')
+      dispatch(clearGenreData())
     }
-  }, [editingGenre, isOpen])
-  
+  }, [isOpen])
+
+  useEffect(() => {
+    if (genre) {
+      setGenreName(genre.name)
+    }
+  }, [genre])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-
-    if (!genreName.trim()) {
-      toast.error('Vui lòng nhập tên thể loại')
-      return
+    if (genreId) {
+      // Update genre logic here
+      updateGenre(genreId, genreName, dispatch)
+      onClose()
+    } else {
+      // Create genre logic here
+      createGenre(genreName, dispatch)
+      onClose()
     }
-
-    onSubmit(genreName, editingGenre)
-    setGenreName('')
   }
 
   if (!isOpen) return null
@@ -40,7 +49,7 @@ const ModalGenre = ({ isOpen, editingGenre, onClose, onSubmit }: ModalGenreProps
     <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50' onClick={onClose}>
       <div className='bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4' onClick={(e) => e.stopPropagation()}>
         <div className='flex justify-between items-center mb-6'>
-          <h2 className='text-xl font-bold'>{editingGenre ? 'Chỉnh sửa thể loại' : 'Thêm thể loại mới'}</h2>
+          <h2 className='text-xl font-bold'>{true ? 'Chỉnh sửa thể loại' : 'Thêm thể loại mới'}</h2>
           <button className='p-1 hover:bg-gray-700 rounded-lg transition-colors cursor-pointer' onClick={onClose}>
             <X size={20} />
           </button>
@@ -75,7 +84,7 @@ const ModalGenre = ({ isOpen, editingGenre, onClose, onSubmit }: ModalGenreProps
               className='px-4 py-2 bg-primary rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
               disabled={!genreName.trim()}
             >
-              {editingGenre ? 'Cập nhật' : 'Thêm'}
+              {genre ? 'Cập nhật' : 'Thêm'}
             </button>
           </div>
         </form>

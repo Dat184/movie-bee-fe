@@ -26,3 +26,14 @@ export interface userLogin {
   email: string
   password: string
 }
+
+export interface genre {
+  _id: string
+  name: string
+}
+
+export interface cast {
+  _id: string
+  name: string
+  avatar: string
+}

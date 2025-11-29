@@ -4,6 +4,7 @@ import storage from 'redux-persist/lib/storage'
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist'
 import authReducer from './slice/authSlice'
 import userReducer from './slice/userSlice'
+import genreReducer from './slice/genreSlice'
 
 const authPersistConfig = {
   key: 'auth',
@@ -20,7 +21,8 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authReducer),
-  user: userReducer
+  user: userReducer,
+  genre: genreReducer
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

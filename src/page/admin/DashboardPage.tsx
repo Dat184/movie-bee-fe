@@ -1,4 +1,5 @@
 import { Clapperboard, MessageCircle, UserRound, UserRoundPlus } from 'lucide-react'
+import { useSelector } from 'react-redux'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 const Dashboard = () => {
@@ -12,6 +13,7 @@ const Dashboard = () => {
     { name: 'T7', comments: 95 },
     { name: 'CN', comments: 78 }
   ]
+  const userQuantity = useSelector((state: any) => state.user.getAllUsers?.meta.total || 0)
 
   return (
     <section className='w-full min-h-screen px-5 pt-5 flex flex-col'>
@@ -31,7 +33,7 @@ const Dashboard = () => {
           <div className='bg-bg-color rounded-xl h-32 flex items-center justify-between p-6 gap-5'>
             <div className='flex flex-col'>
               <p className='text-sm font-medium text-gray-400'>Tổng số người dùng</p>
-              <p className='mt-2 text-3xl font-bold'>100</p>
+              <p className='mt-2 text-3xl font-bold'>{userQuantity}</p>
             </div>
             <div className='rounded-full bg-primary/10 p-3'>
               <UserRound />

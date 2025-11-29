@@ -1,7 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
 import * as Yup from 'yup'
 import loginBg from '../assets/img/login.jpg'
 import { useDispatch } from 'react-redux'
