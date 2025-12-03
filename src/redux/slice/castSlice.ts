@@ -13,6 +13,12 @@ const castSlice = createSlice({
       isFetching: false,
       error: false,
       success: false,
+      meta: {
+        current: 1,
+        pageSize: 10,
+        pages: 1,
+        total: 0
+      },
       casts: [] as cast[]
     },
     deleteCast: {
@@ -52,7 +58,8 @@ const castSlice = createSlice({
       state.getAllCasts.isFetching = false
       state.getAllCasts.error = false
       state.getAllCasts.success = true
-      state.getAllCasts.casts = action.payload
+      state.getAllCasts.casts = action.payload.result
+      state.getAllCasts.meta = action.payload.meta
     },
     getAllCastsFailure: (state) => {
       state.getAllCasts.isFetching = false

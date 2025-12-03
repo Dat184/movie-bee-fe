@@ -8,10 +8,14 @@ import useDebounce from '../../hook/useDebounce'
 import type { genre } from '../../types'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteGenre, getAllGenres } from '../../redux/api_request/genre_api'
+import Loading from '../../components/Loading'
+import { get } from 'react-hook-form'
 
 const GenreAdminPage = () => {
   const genres = useSelector((state: any) => state.genre.getAllGenres?.genres)
   const totalPages = useSelector((state: any) => state.genre.getAllGenres?.meta.pages)
+  const isLoading = useSelector((state: any) => state.genre.getAllGenres.isFetching)
+  const isUpdating = useSelector((state: any) => state.genre.updateGenre.isFetching)
   const [selectedGenre, setSelectedGenre] = useState<string>('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [filter, setFilter] = useState('')
@@ -22,6 +26,10 @@ const GenreAdminPage = () => {
   useEffect(() => {
     getAllGenres(currentPage, 10, filterDebounce, dispatch)
   }, [currentPage, filterDebounce, dispatch])
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [filterDebounce])
 
   const handleChangePage = (event: React.ChangeEvent<unknown>, page: number) => {
     setCurrentPage(page)
@@ -51,7 +59,11 @@ const GenreAdminPage = () => {
     setIsModalOpen(false)
   }
 
-  
+  if (isLoading || isUpdating) {
+    getAllGenres(currentPage, 10, filterDebounce, dispatch)
+    // console.log('loading')
+    // return <Loading />
+  }
 
   return (
     <>
@@ -66,6 +78,7 @@ const GenreAdminPage = () => {
               <Search />
               <input
                 type='text'
+                value={filter}
                 className='bg-transparent border-none outline-none text-white ml-2 flex-1'
                 placeholder='Nhập tên thể loại...'
                 onChange={handleFilterChange}
@@ -94,30 +107,38 @@ const GenreAdminPage = () => {
                     </tr>
                   </thead>
                   <tbody className='divide-y divide-gray-700'>
-                    {genres.map((genre: genre, index: number) => (
-                      <tr key={genre._id} className='hover:bg-gray-700 transition-colors'>
-                        <td className='px-6 py-4 text-sm'>{index + 1}</td>
-                        <td className='px-6 py-4 text-sm font-medium'>{genre.name}</td>
-                        <td className='px-6 py-4 text-right'>
-                          <div className='flex justify-end gap-2'>
-                            <button
-                              className='p-2 rounded-lg border border-gray-500 hover:bg-gray-600 transition-colors cursor-pointer'
-                              onClick={() => handleEdit(genre)}
-                              title='Chỉnh sửa'
-                            >
-                              <Pencil size={16} />
-                            </button>
-                            <button
-                              className='p-2 rounded-lg border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors cursor-pointer'
-                              onClick={() => handleDelete(genre._id, genre.name)}
-                              title='Xóa'
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </div>
+                    {isLoading ? (
+                      <tr>
+                        <td colSpan={3} className='px-6 py-4 text-center text-sm'>
+                          Đang tải dữ liệu...
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      genres.map((genre: genre, index: number) => (
+                        <tr key={genre._id} className='hover:bg-gray-700 transition-colors'>
+                          <td className='px-6 py-4 text-sm'>{index + 1}</td>
+                          <td className='px-6 py-4 text-sm font-medium'>{genre.name}</td>
+                          <td className='px-6 py-4 text-right'>
+                            <div className='flex justify-end gap-2'>
+                              <button
+                                className='p-2 rounded-lg border border-gray-500 hover:bg-gray-600 transition-colors cursor-pointer'
+                                onClick={() => handleEdit(genre)}
+                                title='Chỉnh sửa'
+                              >
+                                <Pencil size={16} />
+                              </button>
+                              <button
+                                className='p-2 rounded-lg border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors cursor-pointer'
+                                onClick={() => handleDelete(genre._id, genre.name)}
+                                title='Xóa'
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -145,7 +166,7 @@ const GenreAdminPage = () => {
         )}
       </section>
 
-      <ModalGenre isOpen={isModalOpen} onClose={handleCloseModal} genreId={selectedGenre}  />
+      <ModalGenre isOpen={isModalOpen} onClose={handleCloseModal} genreId={selectedGenre} />
     </>
   )
 }

@@ -35,5 +35,18 @@ export interface genre {
 export interface cast {
   _id: string
   name: string
-  avatar: string
+  avatarPath: string
+}
+
+export interface Movie {
+  _id: string
+  title: string
+  overview: string
+  posterPath: string 
+  backdropPath: string
+  imdbRating: number
+  trailerUrl: string
+  isDisplay: boolean
+  genres: genre[]
+  casts: cast[]
 }

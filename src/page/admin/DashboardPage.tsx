@@ -1,6 +1,9 @@
 import { Clapperboard, MessageCircle, UserRound, UserRoundPlus } from 'lucide-react'
-import { useSelector } from 'react-redux'
+import { useEffect } from 'react'
+import { get } from 'react-hook-form'
+import { useDispatch, useSelector } from 'react-redux'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { getAllUsers } from '../../redux/api_request/user_api'
 
 const Dashboard = () => {
   // Dữ liệu mẫu cho biểu đồ 7 ngày
@@ -14,7 +17,11 @@ const Dashboard = () => {
     { name: 'CN', comments: 78 }
   ]
   const userQuantity = useSelector((state: any) => state.user.getAllUsers?.meta.total || 0)
+  const dispatch = useDispatch()
 
+  useEffect(() => {
+    getAllUsers(1, 10, dispatch) // Lấy tất cả người dùng để hiển thị tổng số
+  }, [dispatch])
   return (
     <section className='w-full min-h-screen px-5 pt-5 flex flex-col'>
       <h1 className='text-2xl font-bold mb-5'>Dashboard</h1>

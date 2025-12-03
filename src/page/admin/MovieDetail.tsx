@@ -1,203 +1,66 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { ArrowLeft, X } from 'lucide-react'
-import { useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { ArrowLeft } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { set, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { toast } from 'react-toastify'
 import * as Yup from 'yup'
-import { tmdbAPI } from '../../config/config'
-
-interface Genre {
-  id: number
-  name: string
-}
-
-interface Cast {
-  id: number
-  name: string
-}
-
-interface MovieFormData {
-  title: string
-  overview: string
-  posterPath: string
-  backdropPath: string
-  runtime: number
-  trailerUrl: string
-  selectedGenres: number[]
-  selectedCasts: number[]
-  status: string
-}
+import type { cast, genre } from '../../types'
+import { useDispatch, useSelector } from 'react-redux'
+import { getMovieById, updateMovie } from '../../redux/api_request/movie_api'
+import GenreSelector from '../../components/admin/movie/GenreSelector'
+import CastSelector from '../../components/admin/movie/CastSelector'
+import { toast } from 'react-toastify'
 
 const schema = Yup.object({
   title: Yup.string().required('Vui lòng nhập tên phim'),
   overview: Yup.string(),
-  posterPath: Yup.string(),
-  backdropPath: Yup.string(),
+  posterPath: Yup.mixed().nullable(),
+  backdropPath: Yup.mixed().nullable(),
   trailerUrl: Yup.string().url('Vui lòng nhập URL hợp lệ'),
-  runtime: Yup.number().min(0, 'Thời lượng phải lớn hơn 0'),
-  selectedGenres: Yup.array().of(Yup.number()).min(1, 'Vui lòng chọn ít nhất một thể loại'),
-  selectedCasts: Yup.array().of(Yup.number()),
-  status: Yup.string().oneOf(['Public', 'Private'])
+  imdbRating: Yup.string().matches(
+    /^(10(\.0{1,2})?|[0-9](\.[0-9]{1,2})?)$/,
+    'Vui lòng nhập điểm IMDB hợp lệ từ 0 đến 10'
+  ),
+  selectedGenres: Yup.array().of(Yup.string()).min(1, 'Vui lòng chọn ít nhất một thể loại'),
+  selectedCasts: Yup.array().of(Yup.string()),
+  isDisplay: Yup.string().oneOf(['Public', 'Private'])
 })
 
-// Mock genres data
-const mockGenres: Genre[] = [
-  { id: 28, name: 'Action' },
-  { id: 12, name: 'Adventure' },
-  { id: 16, name: 'Animation' },
-  { id: 35, name: 'Comedy' },
-  { id: 80, name: 'Crime' },
-  { id: 99, name: 'Documentary' },
-  { id: 18, name: 'Drama' },
-  { id: 10751, name: 'Family' },
-  { id: 14, name: 'Fantasy' },
-  { id: 36, name: 'History' },
-  { id: 27, name: 'Horror' },
-  { id: 10402, name: 'Music' },
-  { id: 9648, name: 'Mystery' },
-  { id: 10749, name: 'Romance' },
-  { id: 878, name: 'Science Fiction' },
-  { id: 10770, name: 'TV Movie' },
-  { id: 53, name: 'Thriller' },
-  { id: 10752, name: 'War' },
-  { id: 37, name: 'Western' }
-]
-
-// Mock casts data
-const mockCasts: Cast[] = [
-  { id: 1, name: 'Tom Hanks' },
-  { id: 2, name: 'Brad Pitt' },
-  { id: 3, name: 'Leonardo DiCaprio' },
-  { id: 4, name: 'Scarlett Johansson' },
-  { id: 5, name: 'Robert Downey Jr.' },
-  { id: 6, name: 'Chris Evans' },
-  { id: 7, name: 'Jennifer Lawrence' },
-  { id: 8, name: 'Meryl Streep' },
-  { id: 9, name: 'Denzel Washington' },
-  { id: 10, name: 'Johnny Depp' },
-  { id: 11, name: 'Emma Stone' },
-  { id: 12, name: 'Ryan Gosling' },
-  { id: 13, name: 'Anne Hathaway' },
-  { id: 14, name: 'Christian Bale' },
-  { id: 15, name: 'Natalie Portman' }
-]
-
 const MovieDetail = () => {
-  const navigate = useNavigate()
-  const params = useParams<{ id: string }>()
-  const id = params.id
-  const genres = mockGenres
-  const casts = mockCasts
-  const [genreSearch, setGenreSearch] = useState('')
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
-  const [castSearch, setCastSearch] = useState('')
-  const [isCastDropdownOpen, setIsCastDropdownOpen] = useState(false)
-  const castDropdownRef = useRef<HTMLDivElement>(null)
-
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     reset,
-    watch,
     setValue
-  } = useForm<MovieFormData>({
+  } = useForm({
     mode: 'onChange',
-    resolver: yupResolver(schema) as any,
-    defaultValues: {
-      title: '',
-      overview: '',
-      posterPath: '',
-      backdropPath: '',
-      runtime: 0,
-      selectedGenres: [],
-      selectedCasts: [],
-      status: 'Released'
-    }
+    resolver: yupResolver(schema)
   })
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { id } = useParams()
+  const movie = useSelector((state: any) => state.movie.getMovieById?.data)
+  const isLoading = useSelector((state: any) => state.movie.getMovieById?.isFetching)
+  const [selectedGenres, setSelectedGenres] = useState<genre[]>([])
+  const [selectedCasts, setSelectedCasts] = useState<cast[]>([])
+  const [posterPreview, setPosterPreview] = useState<string>('')
+  const [backdropPreview, setBackdropPreview] = useState<string>('')
 
-  const handleGoBack = () => {
-    navigate(-1)
-  }
-
-  const filteredGenres = genres.filter((genre) => genre.name.toLowerCase().includes(genreSearch.toLowerCase()))
-
-  const addGenre = (genreId: number) => {
-    const currentGenres = watch('selectedGenres') || []
-    if (!currentGenres.includes(genreId)) {
-      setValue('selectedGenres', [...currentGenres, genreId], { shouldValidate: true })
-    }
-    setGenreSearch('')
-    setIsDropdownOpen(false)
-  }
-
-  const removeGenre = (genreId: number) => {
-    const currentGenres = watch('selectedGenres') || []
+  const handleGenresChange = (genres: genre[]) => {
+    setSelectedGenres(genres)
     setValue(
       'selectedGenres',
-      currentGenres.filter((id) => id !== genreId),
-      { shouldValidate: true }
+      genres.map((g) => g._id)
     )
   }
 
-  const getSelectedGenreNames = () => {
-    const selectedIds = watch('selectedGenres') || []
-    return genres.filter((g) => selectedIds.includes(g.id))
-  }
-
-  const filteredCasts = casts.filter((cast) => cast.name.toLowerCase().includes(castSearch.toLowerCase()))
-
-  const addCast = (castId: number) => {
-    const currentCasts = watch('selectedCasts') || []
-    if (!currentCasts.includes(castId)) {
-      setValue('selectedCasts', [...currentCasts, castId], { shouldValidate: true })
-    }
-    setCastSearch('')
-    setIsCastDropdownOpen(false)
-  }
-
-  const removeCast = (castId: number) => {
-    const currentCasts = watch('selectedCasts') || []
+  const handleCastsChange = (casts: cast[]) => {
+    setSelectedCasts(casts)
     setValue(
       'selectedCasts',
-      currentCasts.filter((id) => id !== castId),
-      { shouldValidate: true }
+      casts.map((c) => c._id)
     )
-  }
-
-  const getSelectedCastNames = () => {
-    const selectedIds = watch('selectedCasts') || []
-    return casts.filter((c) => selectedIds.includes(c.id))
-  }
-
-  const onSubmit = async (data: MovieFormData) => {
-    if (isValid) {
-      // Here you would typically send the data to your backend API
-      const movieData = {
-        title: data.title,
-        overview: data.overview,
-        poster_path: data.posterPath,
-        backdrop_path: data.backdropPath,
-        runtime: data.runtime,
-        genre_ids: data.selectedGenres,
-        status: data.status
-      }
-
-      console.log('Movie data:', movieData)
-      toast.success(id ? 'Cập nhật phim thành công' : 'Thêm phim mới thành công')
-      reset()
-      navigate(-1)
-    }
-  }
-
-  const handleDelete = () => {
-    if (window.confirm('Bạn có chắc muốn xóa phim này?')) {
-      // Handle delete logic here
-      toast.warning('Đã xóa phim')
-      navigate(-1)
-    }
   }
 
   const handlePosterUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -216,7 +79,7 @@ const MovieDetail = () => {
 
     const reader = new FileReader()
     reader.onloadend = () => {
-      setValue('posterPath', reader.result as string, { shouldValidate: true })
+      setPosterPreview(reader.result as string)
     }
     reader.readAsDataURL(file)
   }
@@ -237,9 +100,90 @@ const MovieDetail = () => {
 
     const reader = new FileReader()
     reader.onloadend = () => {
-      setValue('backdropPath', reader.result as string, { shouldValidate: true })
+      setBackdropPreview(reader.result as string)
     }
     reader.readAsDataURL(file)
+  }
+
+  useEffect(() => {
+    if (id) {
+      getMovieById(id, dispatch)
+    }
+  }, [id, dispatch])
+
+  const handleGoBack = () => {
+    navigate(-1)
+  }
+
+  useEffect(() => {
+    if (id && movie) {
+      reset({
+        title: movie?.title || '',
+        overview: movie?.overview || '',
+        posterPath: null,
+        backdropPath: null,
+        imdbRating: movie?.imdbRating || '',
+        trailerUrl: movie?.trailerUrl || '',
+        isDisplay: movie?.isDisplay ? 'Public' : 'Private',
+        selectedGenres: movie?.genres.map((g: any) => g.genreId?._id || g._id) || [],
+        selectedCasts: movie?.casts.map((c: any) => c.castId?._id || c._id) || []
+      })
+      setPosterPreview(movie?.posterPath || '')
+      setBackdropPreview(movie?.backdropPath || '')
+      // Set selected genres for display
+      if (movie?.genres) {
+        // Map genreId object to genre format
+        const mappedGenres = movie.genres.map((g: any) => ({
+          _id: g.genreId?._id || g._id,
+          name: g.genreId?.name || g.name
+        }))
+        setSelectedGenres(mappedGenres)
+      }
+      // Set selected casts for display
+      if (movie?.casts) {
+        // Map castId object to cast format
+        const mappedCasts = movie.casts.map((c: any) => ({
+          _id: c.castId?._id || c._id,
+          name: c.castId?.name || c.name,
+          avatarPath: c.castId?.avatarPath || c.avatarPath
+        }))
+        setSelectedCasts(mappedCasts)
+      }
+    }
+  }, [movie, id, reset])
+
+  const onSubmit = (data: any) => {
+    const { title, overview, imdbRating, trailerUrl, isDisplay, selectedGenres, selectedCasts } = data
+    console.log(selectedGenres)
+    console.log(selectedCasts)
+    const poster = data.posterPath?.[0] || null
+    const backdrop = data.backdropPath?.[0] || null
+    const formData = new FormData()
+    formData.append('title', title)
+    formData.append('overview', overview)
+    formData.append('imdbRating', imdbRating)
+    formData.append('trailerUrl', trailerUrl)
+    formData.append('isDisplay', isDisplay === 'Public' ? 'true' : 'false')
+    selectedGenres.forEach((genreId: string) => formData.append('genreIds[]', genreId))
+    selectedCasts.forEach((castId: string) => formData.append('castIds[]', castId))
+    if (poster) {
+      formData.append('poster', poster)
+    }
+    if (backdrop) {
+      formData.append('backdrop', backdrop)
+    }
+    console.log('Form data submitted:', formData)
+    if (id) {
+      updateMovie(id, formData, dispatch)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className='w-full min-h-screen flex items-center justify-center'>
+        <p>Đang tải dữ liệu phim...</p>
+      </div>
+    )
   }
 
   return (
@@ -257,272 +201,172 @@ const MovieDetail = () => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-6 w-full max-w-4xl mx-auto'>
-        {/* Basic Information */}
-        <div className='bg-gray-800 p-6 rounded-lg'>
-          <h2 className='text-xl font-semibold mb-4'>Thông tin cơ bản</h2>
-
-          <div className='flex flex-col gap-4'>
-            <div className='flex flex-col gap-2'>
-              <label htmlFor='title' className='font-medium'>
-                Tên phim
-              </label>
-              <input
-                type='text'
-                id='title'
-                className='border border-gray-600 bg-gray-700 rounded-lg p-2 focus:outline-none focus:border-primary'
-                placeholder='Nhập tên phim'
-                {...register('title')}
-              />
-              {errors?.title && <div className='text-sm text-red-500'>{errors.title.message}</div>}
-            </div>
-
-            <div className='grid grid-cols-2 gap-4'>
+      <form className='flex flex-col gap-6 w-full max-w-4xl mx-auto' onSubmit={handleSubmit(onSubmit)}>
+        {/* Form fields will go here */}
+        <div className='flex flex-col gap-6 w-full max-w-4xl mx-auto'>
+          <div className='bg-gray-800 p-6 rounded-lg'>
+            <h2 className='text-xl font-semibold mb-4'>Thông tin cơ bản</h2>
+            <div className='flex flex-col gap-4'>
               <div className='flex flex-col gap-2'>
-                <label htmlFor='runtime' className='font-medium'>
-                  Thời lượng (phút)
+                <label htmlFor='title' className='font-medium'>
+                  Tên phim
                 </label>
                 <input
-                  type='number'
-                  id='runtime'
+                  type='text'
+                  id='title'
                   className='border border-gray-600 bg-gray-700 rounded-lg p-2 focus:outline-none focus:border-primary'
-                  placeholder='Nhập thời lượng'
-                  {...register('runtime', { valueAsNumber: true })}
-                  min='0'
+                  placeholder='Nhập tên phim'
+                  {...register('title')}
+                />
+                {errors?.title && <div className='text-sm text-red-500'>{errors.title.message}</div>}
+              </div>
+
+              <div className='grid grid-cols-2 gap-4'>
+                <div className='flex flex-col gap-2'>
+                  <label htmlFor='imdbRating' className='font-medium'>
+                    Điểm IMDB Rating
+                  </label>
+                  <input
+                    type='string'
+                    id='imdbRating'
+                    className='border border-gray-600 bg-gray-700 rounded-lg p-2 focus:outline-none focus:border-primary'
+                    placeholder='Nhập điểm IMDB Rating'
+                    {...register('imdbRating')}
+                    min='0'
+                  />
+                  {errors?.imdbRating && <div className='text-sm text-red-500'>{errors.imdbRating.message}</div>}
+                </div>
+
+                <div className='flex flex-col gap-2'>
+                  <label htmlFor='isDisplay' className='font-medium'>
+                    Trạng thái
+                  </label>
+                  <select
+                    id='isDisplay'
+                    className='border border-gray-600 bg-gray-700 rounded-lg p-2 appearance-none focus:outline-none focus:border-primary'
+                    {...register('isDisplay')}
+                  >
+                    <option value='Public'>Công khai</option>
+                    <option value='Private'>Chưa công khai</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className='flex flex-col gap-2'>
+                <label htmlFor='trailerUrl' className='font-medium'>
+                  URL trailer
+                </label>
+                <input
+                  type='text'
+                  id='trailerUrl'
+                  className='border border-gray-600 bg-gray-700 rounded-lg p-2 focus:outline-none focus:border-primary'
+                  placeholder='Nhập URL trailer'
+                  {...register('trailerUrl')}
+                />
+                {errors?.trailerUrl && <div className='text-sm text-red-500'>{errors.trailerUrl.message}</div>}
+              </div>
+
+              <div className='flex flex-col gap-2 mt-4'>
+                <label htmlFor='overview' className='font-medium'>
+                  Tóm tắt nội dung
+                </label>
+                <textarea
+                  id='overview'
+                  className='border border-gray-600 bg-gray-700 rounded-lg p-2 focus:outline-none focus:border-primary min-h-[120px]'
+                  placeholder='Nhập tóm tắt nội dung phim'
+                  {...register('overview')}
                 />
               </div>
 
-              <div className='flex flex-col gap-2'>
-                <label htmlFor='status' className='font-medium'>
-                  Trạng thái
-                </label>
-                <select
-                  id='status'
-                  className='border border-gray-600 bg-gray-700 rounded-lg p-2 appearance-none focus:outline-none focus:border-primary'
-                  {...register('status')}
-                >
-                  <option value='Public'>Công khai</option>
-                  <option value='Private'>Chưa công khai</option>
-                </select>
-              </div>
-            </div>
-
-            <div className='flex flex-col gap-2'>
-              <label htmlFor='trailerUrl' className='font-medium'>
-                URL trailer
-              </label>
-              <input
-                type='text'
-                id='trailerUrl'
-                className='border border-gray-600 bg-gray-700 rounded-lg p-2 focus:outline-none focus:border-primary'
-                placeholder='Nhập URL trailer'
-                {...register('trailerUrl')}
+              {/* Genre Selection with Search */}
+              <GenreSelector
+                selectedGenres={selectedGenres}
+                onGenresChange={handleGenresChange}
+                error={errors?.selectedGenres?.message}
               />
-              {errors?.trailerUrl && <div className='text-sm text-red-500'>{errors.trailerUrl.message}</div>}
-            </div>
-          </div>
 
-          <div className='flex flex-col gap-2 mt-4'>
-            <label htmlFor='overview' className='font-medium'>
-              Tóm tắt nội dung
-            </label>
-            <textarea
-              id='overview'
-              className='border border-gray-600 bg-gray-700 rounded-lg p-2 focus:outline-none focus:border-primary min-h-[120px]'
-              placeholder='Nhập tóm tắt nội dung phim'
-              {...register('overview')}
-            />
-          </div>
-        </div>
-
-        {/* Genres */}
-        <div className='bg-gray-800 p-6 rounded-lg'>
-          <h2 className='text-xl font-semibold mb-4'>Thể loại</h2>
-
-          {/* Search Box */}
-          <div className='relative' ref={dropdownRef}>
-            <input
-              type='text'
-              className='w-full border border-gray-600 bg-gray-700 rounded-lg p-2 focus:outline-none focus:border-primary'
-              placeholder='Tìm kiếm thể loại...'
-              value={genreSearch}
-              onChange={(e) => {
-                setGenreSearch(e.target.value)
-                setIsDropdownOpen(true)
-              }}
-              onFocus={() => setIsDropdownOpen(true)}
-            />
-
-            {/* Dropdown */}
-            {isDropdownOpen && genreSearch && filteredGenres.length > 0 && (
-              <div className='absolute z-10 w-full mt-1 bg-gray-700 border border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto'>
-                {filteredGenres.map((genre) => (
-                  <button
-                    key={genre.id}
-                    type='button'
-                    className='w-full text-left px-4 py-2 hover:bg-gray-600 transition-colors'
-                    onClick={() => addGenre(genre.id)}
-                  >
-                    {genre.name}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Selected Genres */}
-          <div className='flex flex-wrap gap-2 mt-4'>
-            {getSelectedGenreNames().map((genre) => (
-              <div key={genre.id} className='flex items-center gap-2 px-3 py-1 bg-primary rounded-lg text-white'>
-                <span>{genre.name}</span>
-                <button
-                  type='button'
-                  onClick={() => removeGenre(genre.id)}
-                  className='hover:bg-primary-dark rounded-full p-0.5 transition-colors'
-                >
-                  <X size={16} />
-                </button>
-              </div>
-            ))}
-          </div>
-
-          {errors?.selectedGenres && <div className='text-sm text-red-500 mt-2'>{errors.selectedGenres.message}</div>}
-        </div>
-
-        {/* Casts */}
-        <div className='bg-gray-800 p-6 rounded-lg'>
-          <h2 className='text-xl font-semibold mb-4'>Diễn viên</h2>
-
-          {/* Search Box */}
-          <div className='relative' ref={castDropdownRef}>
-            <input
-              type='text'
-              className='w-full border border-gray-600 bg-gray-700 rounded-lg p-2 focus:outline-none focus:border-primary'
-              placeholder='Tìm kiếm diễn viên...'
-              value={castSearch}
-              onChange={(e) => {
-                setCastSearch(e.target.value)
-                setIsCastDropdownOpen(true)
-              }}
-              onFocus={() => setIsCastDropdownOpen(true)}
-            />
-
-            {/* Dropdown */}
-            {isCastDropdownOpen && castSearch && filteredCasts.length > 0 && (
-              <div className='absolute z-10 w-full mt-1 bg-gray-700 border border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto'>
-                {filteredCasts.map((cast) => (
-                  <button
-                    key={cast.id}
-                    type='button'
-                    className='w-full text-left px-4 py-2 hover:bg-gray-600 transition-colors'
-                    onClick={() => addCast(cast.id)}
-                  >
-                    {cast.name}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Selected Casts */}
-          <div className='flex flex-wrap gap-2 mt-4'>
-            {getSelectedCastNames().map((cast) => (
-              <div key={cast.id} className='flex items-center gap-2 px-3 py-1 bg-primary rounded-lg text-white'>
-                <span>{cast.name}</span>
-                <button
-                  type='button'
-                  onClick={() => removeCast(cast.id)}
-                  className='hover:bg-primary-dark rounded-full p-0.5 transition-colors'
-                >
-                  <X size={16} />
-                </button>
-              </div>
-            ))}
-          </div>
-
-          {errors?.selectedCasts && <div className='text-sm text-red-500 mt-2'>{errors.selectedCasts.message}</div>}
-        </div>
-
-        <div className='bg-gray-800 p-6 rounded-lg'>
-          <h2 className='text-xl font-semibold mb-4'>Hình ảnh</h2>
-
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-            {/* Poster */}
-            <div className='flex flex-col gap-2'>
-              <label htmlFor='posterFile' className='font-medium'>
-                Poster phim
-              </label>
-              <input
-                id='posterFile'
-                type='file'
-                accept='image/*'
-                onChange={handlePosterUpload}
-                className='border border-gray-600 bg-gray-700 rounded-lg p-2'
+              {/* Cast Selection with Search */}
+              <CastSelector
+                selectedCasts={selectedCasts}
+                onCastsChange={handleCastsChange}
+                error={errors?.selectedCasts?.message}
               />
-              <p className='text-xs text-gray-400'>Hỗ trợ: JPG, PNG, GIF. Tối đa 5MB</p>
 
-              {watch('posterPath') && (
-                <div className='mt-2'>
-                  <p className='text-sm mb-2'>{id ? 'Poster hiện tại' : 'Xem trước'}</p>
-                  <div className='aspect-[2/3] max-w-[200px] overflow-hidden rounded-lg bg-gray-900'>
-                    <img
-                      src={
-                        watch('posterPath')?.startsWith('http')
-                          ? watch('posterPath')?.startsWith('data:')
-                            ? watch('posterPath')
-                            : tmdbAPI.getImage(watch('posterPath') || '', 'w300')
-                          : watch('posterPath')
-                      }
-                      alt='Poster'
-                      className='h-full w-full object-cover'
-                      onError={(e) => {
-                        e.currentTarget.src = 'https://via.placeholder.com/200x300?text=No+Image'
-                      }}
-                    />
+              {/* Poster and Backdrop Section */}
+              <div className='mt-4'>
+                <h3 className='text-lg font-semibold mb-4'>Hình ảnh</h3>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                  {/* Poster */}
+                  <div className='flex flex-col gap-3'>
+                    <div className='flex flex-col gap-2'>
+                      <label htmlFor='posterFile' className='font-medium'>
+                        Ảnh Poster <span className='text-gray-400 text-sm font-normal'>(Tỷ lệ 2:3)</span>
+                      </label>
+                      <input
+                        id='posterFile'
+                        type='file'
+                        accept='image/*'
+                        {...register('posterPath')}
+                        onChange={handlePosterUpload}
+                        className='border border-gray-600 bg-gray-700 rounded-lg p-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:opacity-90 file:cursor-pointer'
+                      />
+                      <p className='text-xs text-gray-400'>Hỗ trợ: JPG, PNG, GIF. Tối đa 5MB</p>
+                    </div>
+                    {posterPreview && (
+                      <div className='flex flex-col gap-2'>
+                        <label className='text-sm text-gray-400'>{id ? 'Ảnh hiện tại' : 'Xem trước'}</label>
+                        <div className='relative aspect-[2/3] w-full max-w-[280px] overflow-hidden rounded-lg border-2 border-gray-600 shadow-lg'>
+                          <img
+                            src={posterPreview}
+                            alt='Poster preview'
+                            className='h-full w-full object-cover'
+                            onError={(e) => {
+                              e.currentTarget.src = 'https://via.placeholder.com/400x600?text=Poster'
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Backdrop */}
+                  <div className='flex flex-col gap-3'>
+                    <div className='flex flex-col gap-2'>
+                      <label htmlFor='backdropFile' className='font-medium'>
+                        Ảnh Backdrop <span className='text-gray-400 text-sm font-normal'>(Tỷ lệ 16:9)</span>
+                      </label>
+                      <input
+                        id='backdropFile'
+                        type='file'
+                        accept='image/*'
+                        {...register('backdropPath')}
+                        onChange={handleBackdropUpload}
+                        className='border border-gray-600 bg-gray-700 rounded-lg p-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:opacity-90 file:cursor-pointer'
+                      />
+                      <p className='text-xs text-gray-400'>Hỗ trợ: JPG, PNG, GIF. Tối đa 5MB</p>
+                    </div>
+                    {backdropPreview && (
+                      <div className='flex flex-col gap-2'>
+                        <label className='text-sm text-gray-400'>{id ? 'Ảnh hiện tại' : 'Xem trước'}</label>
+                        <div className='relative aspect-video w-full overflow-hidden rounded-lg border-2 border-gray-600 shadow-lg'>
+                          <img
+                            src={backdropPreview}
+                            alt='Backdrop preview'
+                            className='h-full w-full object-cover'
+                            onError={(e) => {
+                              e.currentTarget.src = 'https://via.placeholder.com/1920x1080?text=Backdrop'
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-              )}
-            </div>
-
-            {/* Backdrop */}
-            <div className='flex flex-col gap-2'>
-              <label htmlFor='backdropFile' className='font-medium'>
-                Ảnh nền (Backdrop)
-              </label>
-              <input
-                id='backdropFile'
-                type='file'
-                accept='image/*'
-                onChange={handleBackdropUpload}
-                className='border border-gray-600 bg-gray-700 rounded-lg p-2'
-              />
-              <p className='text-xs text-gray-400'>Hỗ trợ: JPG, PNG, GIF. Tối đa 5MB</p>
-
-              {watch('backdropPath') && (
-                <div className='mt-2'>
-                  <p className='text-sm mb-2'>{id ? 'Backdrop hiện tại' : 'Xem trước'}</p>
-                  <div className='aspect-[16/9] max-w-full overflow-hidden rounded-lg bg-gray-900'>
-                    <img
-                      src={
-                        watch('backdropPath')?.startsWith('http')
-                          ? watch('backdropPath')?.startsWith('data:')
-                            ? watch('backdropPath')
-                            : tmdbAPI.getImage(watch('backdropPath') || '', 'w780')
-                          : watch('backdropPath')
-                      }
-                      alt='Backdrop'
-                      className='h-full w-full object-cover'
-                      onError={(e) => {
-                        e.currentTarget.src = 'https://via.placeholder.com/780x439?text=No+Image'
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
-        {/* Action Buttons */}
+
         <div className='flex gap-4'>
           <button
             type='submit'
@@ -530,16 +374,6 @@ const MovieDetail = () => {
           >
             {id ? 'Cập nhật' : 'Thêm mới'}
           </button>
-
-          {id && (
-            <button
-              type='button'
-              className='px-6 py-2 rounded-lg cursor-pointer bg-red-600 hover:bg-red-700 transition-colors'
-              onClick={handleDelete}
-            >
-              Xóa
-            </button>
-          )}
 
           <button
             type='button'

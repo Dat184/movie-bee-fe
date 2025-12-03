@@ -5,6 +5,8 @@ import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, 
 import authReducer from './slice/authSlice'
 import userReducer from './slice/userSlice'
 import genreReducer from './slice/genreSlice'
+import castReducer from './slice/castSlice'
+import movieReducer from './slice/movieSlice'
 
 const authPersistConfig = {
   key: 'auth',
@@ -22,7 +24,9 @@ const persistConfig = {
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authReducer),
   user: userReducer,
-  genre: genreReducer
+  genre: genreReducer,
+  cast: castReducer,
+  movie: movieReducer
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
