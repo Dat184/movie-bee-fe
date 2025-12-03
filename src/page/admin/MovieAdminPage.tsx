@@ -22,7 +22,7 @@ const MovieAdminPage = () => {
   const [genres, setGenres] = useState<Genre[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(0)
+  const totalPages = useSelector((state: any) => state.movie.getAllMovies?.meta.pages)
 
   // Fetch genres only once on mount
 
@@ -47,7 +47,6 @@ const MovieAdminPage = () => {
   const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value)
   }
-  console.log(movies[0].genres)
   return (
     <>
       <section className='w-full min-h-screen px-5 py-10 flex flex-col'>
@@ -102,7 +101,7 @@ const MovieAdminPage = () => {
                               movie.isDisplay ? 'bg-green-500/20 text-green-500' : 'bg-yellow-500/20 text-yellow-500'
                             }`}
                           >
-                            {movie.isDisplay ? 'Công khai' : 'Chưa công khai'}
+                            {movie.isDisplay ? 'Công khai' : 'Ẩn'}
                           </span>
                         </td>
                         <td className='px-6 py-4 text-center text-sm'>

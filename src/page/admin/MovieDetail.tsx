@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import * as Yup from 'yup'
 import type { cast, genre } from '../../types'
 import { useDispatch, useSelector } from 'react-redux'
-import { getMovieById, updateMovie } from '../../redux/api_request/movie_api'
+import { createMovie, getMovieById, updateMovie } from '../../redux/api_request/movie_api'
 import GenreSelector from '../../components/admin/movie/GenreSelector'
 import CastSelector from '../../components/admin/movie/CastSelector'
 import { toast } from 'react-toastify'
@@ -23,7 +23,8 @@ const schema = Yup.object({
   ),
   selectedGenres: Yup.array().of(Yup.string()).min(1, 'Vui lòng chọn ít nhất một thể loại'),
   selectedCasts: Yup.array().of(Yup.string()),
-  isDisplay: Yup.string().oneOf(['Public', 'Private'])
+  isDisplay: Yup.string().required('Vui lòng chọn trạng thái phim'),
+  isBanner: Yup.string().required('Vui lòng chọn trạng thái banner phim')
 })
 
 const MovieDetail = () => {
@@ -124,7 +125,8 @@ const MovieDetail = () => {
         backdropPath: null,
         imdbRating: movie?.imdbRating || '',
         trailerUrl: movie?.trailerUrl || '',
-        isDisplay: movie?.isDisplay ? 'Public' : 'Private',
+        isDisplay: movie?.isDisplay || false,
+        isBanner: movie?.isBanner || false,
         selectedGenres: movie?.genres.map((g: any) => g.genreId?._id || g._id) || [],
         selectedCasts: movie?.casts.map((c: any) => c.castId?._id || c._id) || []
       })
@@ -153,9 +155,7 @@ const MovieDetail = () => {
   }, [movie, id, reset])
 
   const onSubmit = (data: any) => {
-    const { title, overview, imdbRating, trailerUrl, isDisplay, selectedGenres, selectedCasts } = data
-    console.log(selectedGenres)
-    console.log(selectedCasts)
+    const { title, overview, imdbRating, trailerUrl, isDisplay, selectedGenres, selectedCasts, isBanner } = data
     const poster = data.posterPath?.[0] || null
     const backdrop = data.backdropPath?.[0] || null
     const formData = new FormData()
@@ -163,7 +163,8 @@ const MovieDetail = () => {
     formData.append('overview', overview)
     formData.append('imdbRating', imdbRating)
     formData.append('trailerUrl', trailerUrl)
-    formData.append('isDisplay', isDisplay === 'Public' ? 'true' : 'false')
+    formData.append('isDisplay', isDisplay)
+    formData.append('isBanner', isBanner)
     selectedGenres.forEach((genreId: string) => formData.append('genreIds[]', genreId))
     selectedCasts.forEach((castId: string) => formData.append('castIds[]', castId))
     if (poster) {
@@ -172,9 +173,10 @@ const MovieDetail = () => {
     if (backdrop) {
       formData.append('backdrop', backdrop)
     }
-    console.log('Form data submitted:', formData)
     if (id) {
-      updateMovie(id, formData, dispatch)
+      updateMovie(id, formData, dispatch, navigate)
+    } else {
+      createMovie(formData, dispatch, navigate)
     }
   }
 
@@ -221,7 +223,7 @@ const MovieDetail = () => {
                 {errors?.title && <div className='text-sm text-red-500'>{errors.title.message}</div>}
               </div>
 
-              <div className='grid grid-cols-2 gap-4'>
+              <div className='grid grid-cols-3 gap-4'>
                 <div className='flex flex-col gap-2'>
                   <label htmlFor='imdbRating' className='font-medium'>
                     Điểm IMDB Rating
@@ -238,6 +240,20 @@ const MovieDetail = () => {
                 </div>
 
                 <div className='flex flex-col gap-2'>
+                  <label htmlFor='isBanner' className='font-medium'>
+                    Làm Banner
+                  </label>
+                  <select
+                    id='isBanner'
+                    className='border border-gray-600 bg-gray-700 rounded-lg p-2 appearance-none focus:outline-none focus:border-primary'
+                    {...register('isBanner')}
+                  >
+                    <option value='true'>Có</option>
+                    <option value='false'>Không</option>
+                  </select>
+                </div>
+
+                <div className='flex flex-col gap-2'>
                   <label htmlFor='isDisplay' className='font-medium'>
                     Trạng thái
                   </label>
@@ -246,8 +262,8 @@ const MovieDetail = () => {
                     className='border border-gray-600 bg-gray-700 rounded-lg p-2 appearance-none focus:outline-none focus:border-primary'
                     {...register('isDisplay')}
                   >
-                    <option value='Public'>Công khai</option>
-                    <option value='Private'>Chưa công khai</option>
+                    <option value='true'>Công khai</option>
+                    <option value='false'>Ẩn</option>
                   </select>
                 </div>
               </div>

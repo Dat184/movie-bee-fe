@@ -91,7 +91,6 @@ const CastDetail = () => {
       } else {
         // handle create new cast
         createCast(data.avatarURL[0], data.name, dispatch)
-        toast.success('Tạo diễn viên mới thành công')
       }
       handleGoBack()
     }
