@@ -1,91 +1,56 @@
 import Stack from '@mui/material/Stack'
 import { Pencil, Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import Pagination from '@mui/material/Pagination'
-
-interface Comment {
-  id: number
-  userName: string
-  movieName: string
-  content: string
-  createdAt: string
-  isViolation: boolean
-}
-
-type FilterType = 'all' | 'violation' | 'valid'
+import { useDispatch, useSelector } from 'react-redux'
+import type { comment } from '../../types'
+import { deleteComment, editComment, getAllComments } from '../../redux/api_request/comment_api'
+import { set } from 'react-hook-form'
 
 const CommentAdminPage = () => {
-  const [comments, setComments] = useState<Comment[]>([
-    {
-      id: 1,
-      userName: 'Nguyễn Văn A',
-      movieName: 'Avengers: Endgame',
-      content: 'Phim hay quá, đáng xem!',
-      createdAt: '2024-11-15',
-      isViolation: false
-    },
-    {
-      id: 2,
-      userName: 'Trần Thị B',
-      movieName: 'Spider-Man: No Way Home',
-      content: 'Phim dở tệ, lãng phí tiền',
-      createdAt: '2024-11-15',
-      isViolation: true
-    },
-    {
-      id: 3,
-      userName: 'Lê Văn C',
-      movieName: 'The Batman',
-      content: 'Diễn xuất tuyệt vời, kịch bản chặt chẽ',
-      createdAt: '2024-11-15',
-      isViolation: false
-    },
-    {
-      id: 4,
-      userName: 'Phạm Thị D',
-      movieName: 'Doctor Strange 2',
-      content:
-        'Hiệu ứng đẹp mắt nhưng cốt truyện hơi nhạt, Hiệu ứng đẹp mắt nhưng cốt truyện hơi nhạt, Hiệu ứng đẹp mắt nhưng cốt truyện hơi nhạt, Hiệu ứng đẹp mắt nhưng cốt truyện hơi nhạt',
-      createdAt: '2024-11-15',
-      isViolation: false
-    },
-    {
-      id: 5,
-      userName: 'Hoàng Văn E',
-      movieName: 'Thor: Love and Thunder',
-      content: 'Phim rác rưởi, không xem cũng được',
-      createdAt: '2024-11-15',
-      isViolation: true
-    }
-  ])
+  const comments = useSelector((state: any) => state.comment.getAllComments?.comments) as comment[]
+  const totalPages = useSelector((state: any) => state.comment.getAllComments?.meta?.pages)
+  const isLoading = useSelector((state: any) => state.comment.getAllComments?.isFetching)
+  const isDeleting = useSelector((state: any) => state.comment.deleteComment?.isFetching)
+  const isUpdating = useSelector((state: any) => state.comment.editComment?.isFetching)
+  const [call, setCall] = useState(false)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const dispatch = useDispatch()
 
-  const [filter, setFilter] = useState<FilterType>('all')
+  useEffect(() => {
+    getAllComments(currentPage, 20, dispatch)
+  }, [currentPage, dispatch])
 
-  const handleDelete = (id: number, userName: string) => {
-    if (window.confirm(`Bạn có chắc muốn xóa bình luận của "${userName}"?`)) {
-      setComments(comments.filter((comment) => comment.id !== id))
+  const handleDelete = (id: string) => {
+    if (window.confirm(`Bạn có chắc muốn xóa bình luận này?`)) {
+      deleteComment(id, dispatch)
+      setCall(true)
       toast.success('Đã xóa bình luận thành công')
     }
   }
 
-  const handleToggleViolation = (id: number) => {
-    setComments(
-      comments.map((comment) => (comment.id === id ? { ...comment, isViolation: !comment.isViolation } : comment))
-    )
-    const comment = comments.find((c) => c.id === id)
-    if (comment) {
-      toast.success(comment.isViolation ? 'Đã đánh dấu bình luận không vi phạm' : 'Đã đánh dấu bình luận vi phạm')
+  if (isDeleting || isUpdating) {
+    if (call) {
+      getAllComments(currentPage, 20, dispatch)
+      setCall(false)
     }
+    return (
+      <div className='w-full min-h-screen flex justify-center items-center'>
+        <div className='loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16'></div>
+      </div>
+    )
   }
 
-  // Lọc bình luận theo filter
-  const filteredComments = comments.filter((comment) => {
-    if (filter === 'all') return true
-    if (filter === 'violation') return comment.isViolation
-    if (filter === 'valid') return !comment.isViolation
-    return true
-  })
+  const handleUpdateComments = (id: string, isSafe: boolean) => {
+    editComment(id, { isSafe: !isSafe }, dispatch)
+    setCall(true)
+    toast.success(`Đã đánh dấu bình luận ${!isSafe ? 'hợp lệ' : 'vi phạm'}`)
+  }
+
+  const handleChangePage = (event: React.ChangeEvent<unknown>, page: number) => {
+    setCurrentPage(page)
+  }
 
   return (
     <section className='w-full min-h-screen px-5 py-10 flex flex-col'>
@@ -97,38 +62,6 @@ const CommentAdminPage = () => {
       </div>
 
       {/* Bộ lọc */}
-      <div className='flex gap-3 mb-6'>
-        <button
-          className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
-            filter === 'all'
-              ? 'bg-primary text-white'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-          }`}
-          onClick={() => setFilter('all')}
-        >
-          Tất cả ({comments.length})
-        </button>
-        <button
-          className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
-            filter === 'violation'
-              ? 'bg-red-500 text-white'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-          }`}
-          onClick={() => setFilter('violation')}
-        >
-          Vi phạm ({comments.filter(c => c.isViolation).length})
-        </button>
-        <button
-          className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
-            filter === 'valid'
-              ? 'bg-green-500 text-white'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-          }`}
-          onClick={() => setFilter('valid')}
-        >
-          Hợp lệ ({comments.filter(c => !c.isViolation).length})
-        </button>
-      </div>
 
       <div className='flex-1'>
         <div className='bg-gray-800 rounded-lg overflow-hidden'>
@@ -144,54 +77,55 @@ const CommentAdminPage = () => {
               </tr>
             </thead>
             <tbody className='divide-y divide-gray-700'>
-              {filteredComments.map((comment) => (
-                <tr key={comment.id} className='hover:bg-gray-700 transition-colors'>
-                  <td className='px-6 py-4 text-sm font-medium'>{comment.userName}</td>
-                  <td className='px-6 py-4 text-sm'>{comment.movieName}</td>
-                  <td className='px-6 py-4 text-sm max-w-md'>
-                    <p className='break-words'>{comment.content}</p>
-                  </td>
-                  <td className='px-6 py-4 text-sm text-gray-400 whitespace-nowrap'>{comment.createdAt}</td>
-                  <td className='px-6 py-4 text-center'>
-                    <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                        comment.isViolation
-                          ? 'bg-red-500/20 text-red-500 border border-red-500'
-                          : 'bg-green-500/20 text-green-500 border border-green-500'
-                      }`}
-                    >
-                      {comment.isViolation ? 'Vi phạm' : 'Hợp lệ'}
-                    </span>
-                  </td>
-                  <td className='px-6 py-4 text-right'>
-                    <div className='flex justify-end gap-2'>
-                      <button
-                        className={`p-2 rounded-lg border transition-colors cursor-pointer ${
-                          comment.isViolation
-                            ? 'border-green-500 text-green-500 hover:bg-green-500 hover:text-white'
-                            : 'border-red-500 text-red-500 hover:bg-red-500 hover:text-white'
+              {comments.length > 0 &&
+                comments.map((comment) => (
+                  <tr key={comment._id} className='hover:bg-gray-700 transition-colors'>
+                    <td className='px-6 py-4 text-sm font-medium'>{comment.userId?.email}</td>
+                    <td className='px-6 py-4 text-sm'>{comment.movieId?.title}</td>
+                    <td className='px-6 py-4 text-sm max-w-md'>
+                      <p className='break-words'>{comment.content}</p>
+                    </td>
+                    <td className='px-6 py-4 text-sm text-gray-400 whitespace-nowrap'>{comment.createdAt}</td>
+                    <td className='px-6 py-4 text-center'>
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                          comment.isSafe
+                            ? 'bg-green-500/20 text-green-500 border border-green-500'
+                            : 'bg-red-500/20 text-red-500 border border-red-500'
                         }`}
-                        onClick={() => handleToggleViolation(comment.id)}
-                        title={comment.isViolation ? 'Đánh dấu hợp lệ' : 'Đánh dấu vi phạm'}
                       >
-                        <Pencil size={16} />
-                      </button>
-                      <button
-                        className='p-2 rounded-lg border border-gray-500 text-gray-400 hover:bg-gray-600 hover:text-white transition-colors cursor-pointer'
-                        onClick={() => handleDelete(comment.id, comment.userName)}
-                        title='Xóa bình luận'
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                        {comment.isSafe ? 'Hợp lệ' : 'Vi phạm'}
+                      </span>
+                    </td>
+                    <td className='px-6 py-4 text-right'>
+                      <div className='flex justify-end gap-2'>
+                        <button
+                          className={`p-2 rounded-lg border transition-colors cursor-pointer ${
+                            comment.isSafe
+                              ? 'border-green-500 text-green-500 hover:bg-green-500 hover:text-white'
+                              : 'border-red-500 text-red-500 hover:bg-red-500 hover:text-white'
+                          }`}
+                          onClick={() => handleUpdateComments(comment._id, comment.isSafe)}
+                          title={comment.isSafe ? 'Đánh dấu hợp lệ' : 'Đánh dấu vi phạm'}
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          className='p-2 rounded-lg border border-gray-500 text-gray-400 hover:bg-gray-600 hover:text-white transition-colors cursor-pointer'
+                          onClick={() => handleDelete(comment._id)}
+                          title='Xóa bình luận'
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
 
-        {filteredComments.length === 0 && (
+        {comments.length === 0 && (
           <div className='text-center py-10 text-gray-400'>
             <p>Không có bình luận nào</p>
           </div>
@@ -201,7 +135,9 @@ const CommentAdminPage = () => {
       <div className='mt-10 flex justify-center items-center'>
         <Stack spacing={2}>
           <Pagination
-            count={10}
+            count={totalPages}
+            page={currentPage}
+            onChange={handleChangePage}
             color='primary'
             sx={{
               '& .MuiPaginationItem-root': {

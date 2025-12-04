@@ -17,7 +17,7 @@ const Navbar = () => {
   return (
     <div className='w-72 bg-gray-800 text-white p-4 flex flex-col h-screen fixed left-0 top-0'>
       {/* logo */}
-      <div className='flex justify-center items-center flex-row mb-8 gap-2'>
+      <div className='flex justify-center items-center flex-row mb-8 gap-2 cursor-pointer' onClick={() => navigate('/')}>
         <img src={logo} alt='MovieBee Logo' className='w-38 h-12 object-contain' />
         <div className='text-gray-500'>ADMIN</div>
       </div>

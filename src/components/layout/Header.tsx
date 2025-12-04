@@ -80,6 +80,18 @@ const Header = () => {
                 <User className='w-4 h-4' />
                 <span>Trang cá nhân</span>
               </button>
+              {user.role === 'admin' && (
+                <button
+                  onClick={() => {
+                    navigate('/admin')
+                    setShow(false)
+                  }}
+                  className='w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-x-2 transition-colors'
+                >
+                  <User className='w-4 h-4' />
+                  <span>Quản trị</span>
+                </button>
+              )}
               <button
                 onClick={handleLogout}
                 className='w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-x-2 transition-colors text-red-600'

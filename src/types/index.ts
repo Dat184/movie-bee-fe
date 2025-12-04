@@ -42,11 +42,25 @@ export interface Movie {
   _id: string
   title: string
   overview: string
-  posterPath: string 
+  posterPath: string
   backdropPath: string
   imdbRating: number
   trailerUrl: string
   isDisplay: boolean
   genres: genre[]
   casts: cast[]
+}
+
+export interface comment {
+  _id: string
+  userId: User
+  movieId: Movie
+  content: string
+  isSafe: boolean
+  createdAt: string
+}
+
+export interface CommentCreate {
+  movieId: string
+  content: string
 }

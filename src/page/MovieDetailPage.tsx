@@ -1,17 +1,27 @@
+import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { fetchWithToken, tmdbAPI } from '../config/config'
-import useSWR from 'swr'
+import { useDispatch, useSelector } from 'react-redux'
 import DetailCard from '../components/DetailCard'
 import BackdropDetail from '../components/BackdropDetail'
+import { getMovieById } from '../redux/api_request/movie_api'
 
 const MovieDetailPage = () => {
   const { movieId } = useParams<{ movieId: string }>()
-  const { data } = useSWR(movieId ? () => tmdbAPI.getMovieDetails(movieId) : null, fetchWithToken)
-  console.log('data', data)
+  const movie = useSelector((state: any) => state.movie.getMovieById?.data)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (movieId) {
+      getMovieById(movieId, dispatch)
+    }
+  }, [movieId, dispatch])
+
+  console.log(movie)
+
   return (
     <section className='flex justify-center items-center flex-col w-full h-full'>
-      <BackdropDetail data={data} />
-      <DetailCard data={data} />
+      <BackdropDetail data={movie} />
+      <DetailCard data={movie} />
     </section>
   )
 }

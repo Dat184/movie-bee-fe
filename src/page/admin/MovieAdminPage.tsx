@@ -9,6 +9,7 @@ import type { Movie } from '../../types'
 import { get } from 'react-hook-form'
 import { getAllMovies } from '../../redux/api_request/movie_api'
 import { useDispatch, useSelector } from 'react-redux'
+import useDebounce from '../../hook/useDebounce'
 
 interface Genre {
   id: number
@@ -23,11 +24,13 @@ const MovieAdminPage = () => {
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const totalPages = useSelector((state: any) => state.movie.getAllMovies?.meta.pages)
+  const [filter, setFilter] = useState('')
+  const filterDebounce = useDebounce(filter, 1000)
 
   // Fetch genres only once on mount
 
   useEffect(() => {
-    getAllMovies(page, 10, dispatch)
+    getAllMovies(page, 10, filterDebounce, dispatch)
   }, [dispatch, page])
 
   const handleDelete = (_id: string, title: string) => {

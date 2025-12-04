@@ -15,10 +15,10 @@ import {
   updateMovieSuccess
 } from '../slice/movieSlice'
 
-export const getAllMovies = async (page: number, limit: number, dispatch: any) => {
+export const getAllMovies = async (page: number, limit: number, filter: string, dispatch: any) => {
   dispatch(getAllMoviesStart())
   try {
-    const res = await axiosInstance.get(`/movies?current=${page}&pageSize=${limit}`)
+    const res = await axiosInstance.get(`/movies?current=${page}&pageSize=${limit}&title=/${filter}/i`)
     dispatch(getAllMoviesSuccess(res.data.result))
   } catch (error) {
     console.log(error)

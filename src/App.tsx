@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from 'react'
+import { Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { Fragment } from 'react/jsx-runtime'
 import Main from './components/layout/Main'
@@ -25,7 +25,6 @@ import NotFound from './page/NotFound'
 import UserDetail from './page/admin/UserDetail'
 import Profile from './page/Profile'
 import ProtectedRoute from './middleware/ProtectedRoute'
-import { useDispatch } from 'react-redux'
 
 function App() {
   // Kiểm tra và lấy user từ cookie khi app khởi động
