@@ -1,4 +1,3 @@
-import { get } from 'react-hook-form'
 import {
   getActionPlaylistFailure,
   getActionPlaylistStart,
@@ -39,7 +38,6 @@ export const getBannerMovie = async (dispatch: any) => {
     dispatch(getBannerSuccess(res.data.result))
   } catch (error) {
     dispatch(getBannerFailure())
-    console.log(error)
   }
 }
 

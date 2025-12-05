@@ -24,7 +24,7 @@ const DetailCard = ({ data }: { data: Movie }) => {
         <div className='p-5 flex flex-col justify-center items-start h-full gap-2'>
           <img src={data?.posterPath} alt='Movie Poster' className='h-1/2 w-1/2 rounded-xl' />
           <h1 className='text-2xl font-bold'>{data?.title}</h1>
-          <div className='flex gap-2'>
+          <div className='flex flex-wrap gap-2'>
             {data.genres.map((genre) => (
               <span key={genre._id} className='py-2 px-1 rounded-md bg-white/10 text-xs'>
                 {genre.name}

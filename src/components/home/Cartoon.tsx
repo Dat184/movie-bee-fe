@@ -2,10 +2,17 @@ import useSWR from 'swr'
 import MovieCard from '../MovieCard'
 import { fetchWithToken, tmdbAPI } from '../../config/config'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { useEffect } from 'react'
+import { getCartoonMovie } from '../../redux/api_request/collection_api'
+import { useDispatch, useSelector } from 'react-redux'
 
 const Trending = () => {
-  const { data } = useSWR(() => tmdbAPI.getCartoonMovies(), fetchWithToken)
-  const movies = data?.results || []
+  const movies = useSelector((state: any) => state.collection?.cartoonPlaylist?.movies)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    getCartoonMovie('693052f52cf662d6b642cd57', dispatch)
+  }, [dispatch])
   return (
     <section className='trending h-fit px-5 mb-20'>
       <div className='flex flex-col gap-10'>

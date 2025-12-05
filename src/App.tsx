@@ -27,8 +27,6 @@ import Profile from './page/Profile'
 import ProtectedRoute from './middleware/ProtectedRoute'
 
 function App() {
-  // Kiểm tra và lấy user từ cookie khi app khởi động
-
   return (
     <Fragment>
       <Suspense

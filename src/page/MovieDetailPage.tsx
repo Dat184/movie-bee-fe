@@ -16,8 +16,6 @@ const MovieDetailPage = () => {
     }
   }, [movieId, dispatch])
 
-  console.log(movie)
-
   return (
     <section className='flex justify-center items-center flex-col w-full h-full'>
       <BackdropDetail data={movie} />

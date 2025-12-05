@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { Movie } from '../../types'
-import { get } from 'react-hook-form'
 
 const collectionSlice = createSlice({
   name: 'collection',

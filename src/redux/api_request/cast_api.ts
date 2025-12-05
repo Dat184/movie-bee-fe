@@ -23,7 +23,7 @@ export const createCast = async (avatarFile: any, name: string, dispatch: any) =
     formData.append('name', name)
     await axiosInstance.post(`/cast`, formData)
     dispatch(createCastSuccess())
-    toast.success('Tạo diễn viên mới thành công!')
+    // toast.success('Tạo diễn viên mới thành công!')
   } catch (error: any) {
     dispatch(createCastFailure())
     toast.error('Tạo diễn viên mới thất bại!' + error.response.data.message)

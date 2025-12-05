@@ -9,16 +9,10 @@ import { getAllMovies } from '../../redux/api_request/movie_api'
 import { useDispatch, useSelector } from 'react-redux'
 import useDebounce from '../../hook/useDebounce'
 
-interface Genre {
-  id: number
-  name: string
-}
-
 const MovieAdminPage = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const movies = useSelector((state: any) => state.movie.getAllMovies?.movies)
-
 
   const [page, setPage] = useState(1)
   const totalPages = useSelector((state: any) => state.movie.getAllMovies?.meta.pages)

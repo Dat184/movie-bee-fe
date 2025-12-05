@@ -16,12 +16,12 @@ const schema = Yup.object({
   overview: Yup.string(),
   posterPath: Yup.mixed().nullable(),
   backdropPath: Yup.mixed().nullable(),
-  trailerUrl: Yup.string().url('Vui lòng nhập URL hợp lệ'),
+  trailerUrl: Yup.string(),
   imdbRating: Yup.string().matches(
     /^(10(\.0{1,2})?|[0-9](\.[0-9]{1,2})?)$/,
     'Vui lòng nhập điểm IMDB hợp lệ từ 0 đến 10'
   ),
-  selectedGenres: Yup.array().of(Yup.string()).min(1, 'Vui lòng chọn ít nhất một thể loại'),
+  selectedGenres: Yup.array().of(Yup.string()),
   selectedCasts: Yup.array().of(Yup.string()),
   isDisplay: Yup.string().required('Vui lòng chọn trạng thái phim'),
   isBanner: Yup.string().required('Vui lòng chọn trạng thái banner phim')
@@ -40,7 +40,7 @@ const MovieDetail = () => {
   })
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const { id } = useParams()
+  const { id } = useParams<{ id: string | undefined }>()
   const movie = useSelector((state: any) => state.movie.getMovieById?.data)
   const isLoading = useSelector((state: any) => state.movie.getMovieById?.isFetching)
   const [selectedGenres, setSelectedGenres] = useState<genre[]>([])
@@ -173,8 +173,9 @@ const MovieDetail = () => {
     if (backdrop) {
       formData.append('backdrop', backdrop)
     }
-    if (id) {
+    if (id !== undefined) {
       updateMovie(id, formData, dispatch, navigate)
+      return
     } else {
       createMovie(formData, dispatch, navigate)
     }

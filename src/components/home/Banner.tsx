@@ -1,14 +1,20 @@
+import { useEffect } from 'react'
+import { getBannerMovie } from '../../redux/api_request/collection_api'
+import { useDispatch, useSelector } from 'react-redux'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, Pagination, Autoplay } from 'swiper/modules'
-import useSWR from 'swr'
-import { fetchWithToken } from '../../config/config'
 import BannerItem from '../BannerItem'
 
 const Banner = () => {
-  const { data } = useSWR(`https://api.themoviedb.org/3/movie/upcoming?language=vi-VN&page=1`, (url) =>
-    fetchWithToken(url)
-  )
-  const movie = data?.results || []
+  const movie = useSelector((state: any) => state.collection?.banner?.movies)
+  const isLoading = useSelector((state: any) => state.collection?.banner?.isFetching)
+  const error = useSelector((state: any) => state.collection?.banner?.error)
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    getBannerMovie(dispatch)
+  }, [dispatch])
 
   return (
     <section className='h-screen '>
