@@ -1,4 +1,3 @@
-import { Play } from 'lucide-react'
 import { fetchWithToken, tmdbAPI } from '../config/config'
 import { useEffect, useState } from 'react'
 import PlayNowBtn from './ui/PlayNowBtn'

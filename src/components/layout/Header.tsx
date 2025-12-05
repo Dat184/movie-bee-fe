@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { UserRound, ChevronDown, User, LogOut } from 'lucide-react'
-import { use, useEffect, useState } from 'react'
+import {  useEffect, useState } from 'react'
 import logo from '../../assets/img/movie_bee_logo3.svg'
 import { useSelector, useDispatch } from 'react-redux'
 import useClickOutside from '../../hook/useClickOutside'

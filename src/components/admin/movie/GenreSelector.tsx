@@ -3,7 +3,6 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllGenres } from '../../../redux/api_request/genre_api'
 import type { genre } from '../../../types'
-import useDebounce from '../../../hook/useDebounce'
 import { useState } from 'react'
 import useClickOutside from '../../../hook/useClickOutside'
 

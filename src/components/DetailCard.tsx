@@ -3,7 +3,7 @@ import PlayNowBtn from './ui/PlayNowBtn'
 import { useState } from 'react'
 import Comment from './Comment'
 import { useNavigate } from 'react-router-dom'
-import type { genre, Movie } from '../types'
+import type { Movie } from '../types'
 
 const DetailCard = ({ data }: { data: Movie }) => {
   const navigate = useNavigate()
@@ -43,7 +43,7 @@ const DetailCard = ({ data }: { data: Movie }) => {
             </div>
 
             <div className='w-fit h-13 rounded-full bg-secondary gap-3 px-3 flex items-center justify-center hover:scale-110 transition-all cursor-pointer'>
-              <Star fill='currentColor' /> 9.0 <strong>Đánh giá</strong>
+              <Star fill='currentColor' /> {data?.imdbRating} <strong>Đánh giá từ IMDb</strong>
             </div>
           </div>
 

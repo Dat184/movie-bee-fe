@@ -1,5 +1,4 @@
-import { use } from 'react'
-import { fetchWithToken, tmdbAPI } from '../config/config'
+import {  tmdbAPI } from '../config/config'
 import { useNavigate } from 'react-router-dom'
 
 const MovieCardTopic = ({ movie }: { movie: any }) => {

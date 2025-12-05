@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getCommentsByMovieId, postComment } from '../redux/api_request/comment_api'
 import { clearComments } from '../redux/slice/commentSlice'
-import type { comment } from '../types'
 import { toast } from 'react-toastify'
 
 const Comment = ({ movieId }: { movieId: string }) => {
@@ -12,7 +11,6 @@ const Comment = ({ movieId }: { movieId: string }) => {
   const comment = useSelector((state: any) => state.comment.getCommentsByMovieId?.comments)
   const isPostingComment = useSelector((state: any) => state.comment.postComment.isFetching)
   const totalPages = useSelector((state: any) => state.comment.getCommentsByMovieId?.meta?.pages)
-  const user = useSelector((state: any) => state.auth.profile?.userInfo)
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [content, setContent] = useState('')
 
@@ -90,16 +88,16 @@ const Comment = ({ movieId }: { movieId: string }) => {
           {comment.map((cmt: any) => (
             <CommentItem key={cmt._id} comment={cmt} />
           ))}
-
-          <div className='mt-10 text-center'>
-            <button
-              className={`!w-fit  ${totalPages === currentPage ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
-              onClick={() => (totalPages === currentPage ? null : setCurrentPage(currentPage + 1))}
-              disabled={totalPages === currentPage}
-            >
-              Load more
-            </button>
-          </div>
+          {totalPages === currentPage ? null : (
+            <div className='mt-10 text-center'>
+              <button
+                className={`!w-fit  ${totalPages === currentPage ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                onClick={() => (totalPages === currentPage ? null : setCurrentPage(currentPage + 1))}
+              >
+                Load more
+              </button>
+            </div>
+          )}
         </>
       )}
     </>

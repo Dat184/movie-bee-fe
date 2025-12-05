@@ -4,9 +4,7 @@ import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { fetchWithToken, tmdbAPI } from '../../config/config'
 import type { Movie } from '../../types'
-import { get } from 'react-hook-form'
 import { getAllMovies } from '../../redux/api_request/movie_api'
 import { useDispatch, useSelector } from 'react-redux'
 import useDebounce from '../../hook/useDebounce'
@@ -20,8 +18,8 @@ const MovieAdminPage = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const movies = useSelector((state: any) => state.movie.getAllMovies?.movies)
-  const [genres, setGenres] = useState<Genre[]>([])
-  const [loading, setLoading] = useState(true)
+
+
   const [page, setPage] = useState(1)
   const totalPages = useSelector((state: any) => state.movie.getAllMovies?.meta.pages)
   const [filter, setFilter] = useState('')

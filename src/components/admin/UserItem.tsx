@@ -1,10 +1,8 @@
 import { Pencil, Trash2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
 import type { User } from '../../types'
-import { deleteUser, getAllUsers } from '../../redux/api_request/user_api'
+import { deleteUser } from '../../redux/api_request/user_api'
 import { useDispatch } from 'react-redux'
-import { get } from 'react-hook-form'
 
 export const UserItem = ({ user }: { user: User }) => {
   const navigate = useNavigate()

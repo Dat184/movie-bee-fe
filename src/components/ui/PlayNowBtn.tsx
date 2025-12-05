@@ -1,5 +1,4 @@
 import { Play } from 'lucide-react'
-import React from 'react'
 
 const PlayNowBtn = () => {
   return (

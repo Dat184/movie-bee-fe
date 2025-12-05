@@ -1,6 +1,5 @@
-import { useEffect } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import {  useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 
 interface ProtectedRouteProps {

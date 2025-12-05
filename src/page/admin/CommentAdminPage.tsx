@@ -6,7 +6,6 @@ import Pagination from '@mui/material/Pagination'
 import { useDispatch, useSelector } from 'react-redux'
 import type { comment } from '../../types'
 import { deleteComment, editComment, getAllComments } from '../../redux/api_request/comment_api'
-import { set } from 'react-hook-form'
 
 const CommentAdminPage = () => {
   const comments = useSelector((state: any) => state.comment.getAllComments?.comments) as comment[]

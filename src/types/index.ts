@@ -49,6 +49,7 @@ export interface Movie {
   isDisplay: boolean
   genres: genre[]
   casts: cast[]
+  videoUrl: string
 }
 
 export interface comment {

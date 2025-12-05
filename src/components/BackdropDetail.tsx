@@ -1,4 +1,3 @@
-import { tmdbAPI } from '../config/config'
 import type { Movie } from '../types'
 
 const BackdropDetail = ({ data }: { data: Movie }) => {
