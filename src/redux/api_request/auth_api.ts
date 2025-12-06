@@ -23,7 +23,7 @@ export const login = async (user: userLogin, dispatch: any, navigate: any) => {
   dispatch(loginStart())
   try {
     const res = await axiosInstance.post('/auth/login', user)
-    dispatch(loginSuccess(res.data.result))
+    dispatch(loginSuccess(res.data.result.user))
     navigate('/')
     toast.success('Đăng nhập thành công!')
   } catch (error: any) {
@@ -32,7 +32,7 @@ export const login = async (user: userLogin, dispatch: any, navigate: any) => {
   }
 }
 
-export const logout = async (dispatch: any, navigate: any) => {
+export const logout = async (dispatch: any) => {
   dispatch(logoutStart())
   try {
     await axiosInstance.post('/auth/logout')
@@ -50,6 +50,7 @@ export const profile = async (dispatch: any) => {
   try {
     const res = await axiosInstance.get('/auth/profile')
     dispatch(profileSuccess(res.data.result))
+    dispatch(loginSuccess(res.data.result))
   } catch (error: any) {
     dispatch(profileFailure())
   }

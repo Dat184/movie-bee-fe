@@ -7,13 +7,13 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
-  const user = useSelector((state: any) => state.auth.login.currentUser?.user)
+  const user = useSelector((state: any) => state.auth.login?.currentUser)
   // const isLoading = useSelector((state: any) => state.auth.profile?.isFetching)
   // const user = useSelector((state: any) => state.auth.profile?.userInfo)
-  // console.log('User from App:', user)
+  console.log('User from App:', user)
   const userRole = user?.role
 
-  // console.log('User role:', userRole)
+  console.log('User role:', userRole)
 
   if (!allowedRoles.includes(userRole !== null ? userRole : '')) {
     toast.error('Bạn không có quyền truy cập trang này.')
