@@ -1,40 +1,25 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import MovieList from '../MovieList'
-import { fetchWithToken, tmdbAPI } from '../../config/config'
+import { getActionMovie, getAnimeMovie, getMaverMovie } from '../../redux/api_request/collection_api'
+import { useDispatch, useSelector } from 'react-redux'
 
 const Topic = () => {
-  const [marvelMovies, setMarvelMovies] = useState<any[]>([])
-  const [animeMovies, setAnimeMovies] = useState<any[]>([])
-  const [usUkMovies, setUsUkMovies] = useState<any[]>([])
-
-  const fetchMarvelMovies = async () => {
-    const marvel = await fetchWithToken(tmdbAPI.getMovieByListId(84979))
-    setMarvelMovies(marvel.items)
-  }
-
-  const fetchAnimeMovies = async () => {
-    const anime = await fetchWithToken(tmdbAPI.getMovieByListId(146567))
-    setAnimeMovies(anime.items)
-  }
-
-  const fetchUsUkMovies = async () => {
-    const usUk = await fetchWithToken(tmdbAPI.getMovieByKeyword(322496))
-    console.log('usUk', usUk)
-    setUsUkMovies(usUk.results)
-  }
+  const movieMaver = useSelector((state: any) => state.collection?.maverPlaylist?.movies)
+  const movieAnime = useSelector((state: any) => state.collection?.animePlaylist?.movies)
+  const movieAction = useSelector((state: any) => state.collection?.actionPlaylist?.movies)
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    fetchMarvelMovies()
-    fetchAnimeMovies()
-    fetchUsUkMovies()
-  }, [])
-
+    getActionMovie('6909b493faf209dc1dda35ea', dispatch)
+    getMaverMovie('692a7643ce5b27fe192c9f0e', dispatch)
+    getAnimeMovie('69284e1613245d19fd0595a3', dispatch)
+  }, [dispatch])
   return (
     <section className='Topic h-fit px-5 my-30'>
       <div className='bg-gradient-to-t from-[#282B3A00] to-[#282B3AFF] h-full w-full rounded-2xl p-8 space-y-10'>
-        <MovieList title='Vũ trụ Marvel' movies={marvelMovies} />
-        <MovieList title='Anime' movies={animeMovies} />
-        <MovieList title='Hành Động' movies={usUkMovies} />
+        <MovieList title='Vũ trụ Marvel' movies={movieMaver} />
+        <MovieList title='Anime' movies={movieAnime} />
+        <MovieList title='Hành Động' movies={movieAction} />
       </div>
     </section>
   )

@@ -25,15 +25,13 @@ import NotFound from './page/NotFound'
 import UserDetail from './page/admin/UserDetail'
 import Profile from './page/Profile'
 import ProtectedRoute from './middleware/ProtectedRoute'
+import EditVideo from './page/admin/EditVideo'
+import Loading from './components/Loading'
 
 function App() {
   return (
     <Fragment>
-      <Suspense
-        fallback={
-          <div className='w-10 h-10 rounded-full border-4 border-primary border-t-transparent border-t-4 animate-spin mx-auto my-96 mar'></div>
-        }
-      >
+      <Suspense fallback={<Loading></Loading>}>
         <Routes>
           <Route element={<Main />}>
             <Route path='/' element={<Home />}></Route>
@@ -51,13 +49,14 @@ function App() {
           <Route path='/confirm-email' element={<ConfirmEmail />}></Route>
 
           {/* admin page */}
-          <Route path='/admin' element={<AdminMain />}>
-            <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+          <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+            <Route path='/admin' element={<AdminMain />}>
               <Route index element={<Navigate to='dashboard' replace />} />
               <Route path='dashboard' element={<Dashboard />}></Route>
               <Route path='movies' element={<MovieAdminPage />}></Route>
               <Route path='movies/new' element={<MovieDetail />}></Route>
               <Route path='movies/:id' element={<MovieDetail />}></Route>
+              <Route path='movies/:id/edit-video' element={<EditVideo />}></Route>
               <Route path='cast' element={<CastAdminPage />}></Route>
               <Route path='cast/create-cast' element={<CastDetaill />}></Route>
               <Route path='cast/edit-cast/:id' element={<CastDetaill />}></Route>

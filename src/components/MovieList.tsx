@@ -1,7 +1,15 @@
+import { useSelector } from 'react-redux'
+import type { Movie } from '../types'
+import { MovieCardSkeleton } from './home/Cinema'
 import MovieCardTopic from './MovieCardTopic'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
-const MovieList = ({ title, movies }: { title: string; movies: any[] }) => {
+const MovieList = ({ title, movies }: { title: string; movies: Movie[] }) => {
+  const isLoading = useSelector((state: any) => {
+    if (title === 'Vũ trụ Marvel') return state.collection?.maverPlaylist?.isFetching
+    if (title === 'Anime') return state.collection?.animePlaylist?.isFetching
+    return state.collection?.actionPlaylist?.isFetching
+  })
   return (
     <div className='w-full h-fit flex flex-row items-center justify-between movie-list'>
       <div className=''>
@@ -17,10 +25,23 @@ const MovieList = ({ title, movies }: { title: string; movies: any[] }) => {
         >
           {title}
         </h2>
-        <p>Xem toàn bộ</p>
       </div>
       <div className='flex overflow-x-auto pb-5 w-5/6'>
-        {movies.length > 0 && (
+        {isLoading && (
+          <div className='flex flex-row gap-5 w-full h-fit'>
+            <div className='w-1/3 h-full'>
+              <MovieCardSkeleton></MovieCardSkeleton>
+            </div>
+            <div className='w-1/3 h-full'>
+              <MovieCardSkeleton></MovieCardSkeleton>
+            </div>
+            <div className='w-1/3 h-full'>
+              <MovieCardSkeleton></MovieCardSkeleton>
+            </div>
+          </div>
+        )}
+
+        {!isLoading && movies.length > 0 && (
           <Swiper
             grabCursor={true}
             spaceBetween={20}
@@ -37,8 +58,8 @@ const MovieList = ({ title, movies }: { title: string; movies: any[] }) => {
             }}
           >
             {movies.length > 0 &&
-              movies.map((item: any) => (
-                <SwiperSlide key={item.id}>
+              movies.map((item: Movie) => (
+                <SwiperSlide key={item._id}>
                   <MovieCardTopic movie={item} />
                 </SwiperSlide>
               ))}

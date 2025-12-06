@@ -2,8 +2,13 @@ import { fetchWithToken, tmdbAPI } from '../config/config'
 import { useEffect, useState } from 'react'
 import PlayNowBtn from './ui/PlayNowBtn'
 import type { genre, Movie } from '../types'
+import { useNavigate } from 'react-router-dom'
 
 const BannerItem = ({ movie }: { movie: Movie }) => {
+  const navigate = useNavigate()
+  const handleClickPlaybtn = () => {
+    navigate(`/movies/${movie._id}`)
+  }
   return (
     <div className='h-screen w-full rounded-lg relative overflow-hidden '>
       <div className='overlay absolute inset-0 bg-gradient-to-t from-bg-color/100 via-black/30  to-bg-color/70 rounded-lg z-10'></div>
@@ -23,7 +28,7 @@ const BannerItem = ({ movie }: { movie: Movie }) => {
             </span>
           ))}
         </div>
-        <PlayNowBtn />
+        <PlayNowBtn onClick={handleClickPlaybtn} />
       </div>
     </div>
   )

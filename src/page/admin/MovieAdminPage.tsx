@@ -1,11 +1,11 @@
 import Pagination from '@mui/material/Pagination'
 import Stack from '@mui/material/Stack'
-import { Pencil, Plus, Trash2 } from 'lucide-react'
+import { Pencil, Plus, Search, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import type { Movie } from '../../types'
-import { getAllMovies } from '../../redux/api_request/movie_api'
+import { deleteMovie, getAllMovies } from '../../redux/api_request/movie_api'
 import { useDispatch, useSelector } from 'react-redux'
 import useDebounce from '../../hook/useDebounce'
 
@@ -22,12 +22,13 @@ const MovieAdminPage = () => {
   // Fetch genres only once on mount
 
   useEffect(() => {
-    getAllMovies(page, 10, filterDebounce, dispatch)
-  }, [dispatch, page])
+    getAllMovies(page, 10, filterDebounce, false, dispatch)
+  }, [dispatch, page, filterDebounce])
 
-  const handleDelete = (_id: string, title: string) => {
+  const handleDelete = async (_id: string, title: string) => {
     if (window.confirm(`Bạn có chắc muốn xóa phim "${title}"?`)) {
-      toast.success('Đã xóa phim thành công')
+      await deleteMovie(_id, dispatch)
+      getAllMovies(page, 10, filterDebounce, false, dispatch)
     }
   }
 
@@ -49,6 +50,16 @@ const MovieAdminPage = () => {
           <div>
             <h1 className='text-2xl font-bold'>Quản lý phim</h1>
             <p className='text-gray-400'>Danh sách các phim hiện có</p>
+          </div>
+          <div className='bg-[rgba(255,255,255,.08)] w-[500px] h-10 flex flex-row items-center rounded-md px-3'>
+            <Search />
+            <input
+              type='text'
+              value={filter}
+              className='bg-transparent border-none outline-none text-white ml-2 flex-1'
+              placeholder='Nhập tên diễn viên...'
+              onChange={(e) => setFilter(e.target.value)}
+            />
           </div>
           <button
             className='bg-primary px-4 py-2 rounded-lg font-semibold flex items-center gap-2 hover:opacity-90 transition-opacity cursor-pointer'

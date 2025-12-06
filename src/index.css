@@ -73,3 +73,17 @@
   width: 196px;
   height: auto;
 }
+
+.skeleton {
+  background-color: #eee;
+  background-image: linear-gradient(110deg, #d1d1d1 8%, #e0e0e0 18%, #d1d1d1 33%);
+
+  background-size: 200% 100%;
+  animation: 1.5s shine linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
+}

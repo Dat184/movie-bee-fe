@@ -35,6 +35,11 @@ const userSlice = createSlice({
       isFetching: false,
       error: false,
       success: false
+    },
+    countNewUser: {
+      isFetching: false,
+      error: false,
+      data: 0
     }
   },
   reducers: {
@@ -116,6 +121,22 @@ const userSlice = createSlice({
       state.createUser.isFetching = false
       state.createUser.error = true
       state.createUser.success = false
+    },
+
+    getCountNewUsersStart: (state) => {
+      state.countNewUser.isFetching = true
+      state.countNewUser.error = false
+      state.countNewUser.data = 0
+    },
+    getCountNewUsersSuccess: (state, action) => {
+      state.countNewUser.isFetching = false
+      state.countNewUser.error = false
+      state.countNewUser.data = action.payload.newUsersCount
+    },
+    getCountNewUsersFailure: (state) => {
+      state.countNewUser.isFetching = false
+      state.countNewUser.error = true
+      state.countNewUser.data = 0
     }
   }
 })
@@ -139,6 +160,10 @@ export const {
 
   createUserStart,
   createUserSuccess,
-  createUserFailure
+  createUserFailure,
+
+  getCountNewUsersStart,
+  getCountNewUsersSuccess,
+  getCountNewUsersFailure
 } = userSlice.actions
 export default userSlice.reducer

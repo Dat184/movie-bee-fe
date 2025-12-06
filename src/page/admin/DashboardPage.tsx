@@ -2,7 +2,7 @@ import { Clapperboard, MessageCircle, UserRound, UserRoundPlus } from 'lucide-re
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import { getAllUsers } from '../../redux/api_request/user_api'
+import { getAllUsers, getCountNewUsers } from '../../redux/api_request/user_api'
 
 const Dashboard = () => {
   // Dữ liệu mẫu cho biểu đồ 7 ngày
@@ -16,10 +16,15 @@ const Dashboard = () => {
     { name: 'CN', comments: 78 }
   ]
   const userQuantity = useSelector((state: any) => state.user.getAllUsers?.meta.total || 0)
+  const movieQuantity = useSelector((state: any) => state.movie.getAllMovies?.meta.total || 0)
+  const commentQuantity = useSelector((state: any) => state.comment.getAllComments?.meta.total || 0)
+  const newUserQuantity = useSelector((state: any) => state.user.countNewUser.data || 0)
+
   const dispatch = useDispatch()
 
   useEffect(() => {
     getAllUsers(1, 10, dispatch) // Lấy tất cả người dùng để hiển thị tổng số
+    getCountNewUsers(dispatch)
   }, [dispatch])
   return (
     <section className='w-full min-h-screen px-5 pt-5 flex flex-col'>
@@ -30,7 +35,7 @@ const Dashboard = () => {
           <div className='bg-bg-color rounded-xl h-32 flex items-center justify-between p-6 gap-5'>
             <div className='flex flex-col'>
               <p className='text-sm font-medium text-gray-400'>Tổng số phim</p>
-              <p className='mt-2 text-3xl font-bold'>100</p>
+              <p className='mt-2 text-3xl font-bold'>{movieQuantity}</p>
             </div>
             <div className='rounded-full bg-primary/10 p-3'>
               <Clapperboard />
@@ -48,7 +53,7 @@ const Dashboard = () => {
           <div className='bg-bg-color rounded-xl h-32 flex items-center justify-between p-6 gap-5'>
             <div className='flex flex-col'>
               <p className='text-sm font-medium text-gray-400'>Tổng số bình luận</p>
-              <p className='mt-2 text-3xl font-bold'>100</p>
+              <p className='mt-2 text-3xl font-bold'>{commentQuantity}</p>
             </div>
             <div className='rounded-full bg-primary/10 p-3'>
               <MessageCircle />
@@ -57,7 +62,7 @@ const Dashboard = () => {
           <div className='bg-bg-color rounded-xl h-32 flex items-center justify-between p-6 gap-5'>
             <div className='flex flex-col'>
               <p className='text-sm font-medium text-gray-400'>Người dùng mới</p>
-              <p className='mt-2 text-3xl font-bold'>100</p>
+              <p className='mt-2 text-3xl font-bold'>{newUserQuantity}</p>
             </div>
             <div className='rounded-full bg-primary/10 p-3'>
               <UserRoundPlus />

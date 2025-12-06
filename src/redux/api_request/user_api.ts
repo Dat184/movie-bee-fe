@@ -9,6 +9,9 @@ import {
   getAllUsersFailure,
   getAllUsersStart,
   getAllUsersSuccess,
+  getCountNewUsersFailure,
+  getCountNewUsersStart,
+  getCountNewUsersSuccess,
   getUserFailure,
   getUserStart,
   getUserSuccess,
@@ -100,5 +103,17 @@ export const deleteUser = async (userId: string, dispatch: any) => {
     console.log(error)
     dispatch(getUserFailure())
     toast.error('Xóa người dùng thất bại. Vui lòng thử lại.' + error.response.data.message)
+  }
+}
+
+export const getCountNewUsers = async (dispatch: any) => {
+  dispatch(getCountNewUsersStart())
+  try {
+    const res = await axiosInstance.get(`/users/newUsersCount`)
+    dispatch(getCountNewUsersSuccess(res.data.result))
+  } catch (error: any) {
+    console.log(error)
+    dispatch(getCountNewUsersFailure())
+    toast.error('Lấy số lượng người dùng mới thất bại. Vui lòng thử lại.' + error.response.data.message)
   }
 }

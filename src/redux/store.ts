@@ -9,6 +9,7 @@ import castReducer from './slice/castSlice'
 import movieReducer from './slice/movieSlice'
 import collectionReducer from './slice/collectionSilce'
 import commentReducer from './slice/commentSlice'
+import videoReducer from './slice/videoSlice'
 
 const authPersistConfig = {
   key: 'auth',
@@ -30,7 +31,8 @@ const rootReducer = combineReducers({
   cast: castReducer,
   movie: movieReducer,
   collection: collectionReducer,
-  comment: commentReducer
+  comment: commentReducer,
+  video: videoReducer
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

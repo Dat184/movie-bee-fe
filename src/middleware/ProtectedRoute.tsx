@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom'
-import {  useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 
 interface ProtectedRouteProps {
@@ -8,6 +8,8 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
   const user = useSelector((state: any) => state.auth.login.currentUser?.user)
+  // const isLoading = useSelector((state: any) => state.auth.profile?.isFetching)
+  // const user = useSelector((state: any) => state.auth.profile?.userInfo)
   // console.log('User from App:', user)
   const userRole = user?.role
 

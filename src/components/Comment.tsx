@@ -13,6 +13,7 @@ const Comment = ({ movieId }: { movieId: string }) => {
   const totalPages = useSelector((state: any) => state.comment.getCommentsByMovieId?.meta?.pages)
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [content, setContent] = useState('')
+  const user = useSelector((state: any) => state.auth.login.currentUser?.user)
 
   // useEffect(() => {
   //   if (movieId) {
@@ -43,6 +44,10 @@ const Comment = ({ movieId }: { movieId: string }) => {
   }, [movieId, dispatch])
 
   const handleCreateComment = () => {
+    if (!user) {
+      toast.warning('Vui lòng đăng nhập để bình luận')
+      return
+    }
     if (!content.trim()) {
       toast.warning('Vui lòng nhập nội dung bình luận')
       return

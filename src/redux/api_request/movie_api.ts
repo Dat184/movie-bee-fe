@@ -4,6 +4,9 @@ import {
   createMovieFailure,
   createMovieStart,
   createMovieSuccess,
+  deleteMovieFailure,
+  deleteMovieStart,
+  deleteMovieSuccess,
   getAllMoviesFailure,
   getAllMoviesStart,
   getAllMoviesSuccess,
@@ -15,10 +18,12 @@ import {
   updateMovieSuccess
 } from '../slice/movieSlice'
 
-export const getAllMovies = async (page: number, limit: number, filter: string, dispatch: any) => {
+export const getAllMovies = async (page: number, limit: number, filter: string, isClient: boolean, dispatch: any) => {
   dispatch(getAllMoviesStart())
   try {
-    const res = await axiosInstance.get(`/movies?current=${page}&pageSize=${limit}&title=/${filter}/i`)
+    const res = await axiosInstance.get(
+      `/movies?current=${page}&pageSize=${limit}&title=/${filter}/i&isDisplay=${isClient ? true : ''}`
+    )
     dispatch(getAllMoviesSuccess(res.data.result))
   } catch (error) {
     console.log(error)
@@ -61,5 +66,18 @@ export const createMovie = async (data: FormData, dispatch: any, navigate: any) 
     console.log(error)
     dispatch(createMovieFailure())
     toast.error('Tạo phim thất bại. Vui lòng thử lại.')
+  }
+}
+
+export const deleteMovie = async (id: string, dispatch: any) => {
+  dispatch(deleteMovieStart())
+  try {
+    await axiosInstance.delete(`/movies/${id}`)
+    dispatch(deleteMovieSuccess())
+    toast.success('Đã xóa phim thành công')
+  } catch (error) {
+    console.log(error)
+    toast.error('Xóa phim thất bại. Vui lòng thử lại.')
+    dispatch(deleteMovieFailure())
   }
 }

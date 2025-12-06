@@ -38,9 +38,7 @@ const DetailCard = ({ data }: { data: Movie }) => {
       <div className='w-2/3  rounded-r-2xl rounded-l-[3rem] bg-bg-color'>
         <div className='p-10'>
           <div className='flex flex-row gap-3 justify-between items-center'>
-            <div onClick={handleClickPlaybtn}>
-              <PlayNowBtn />
-            </div>
+            <PlayNowBtn onClick={handleClickPlaybtn} />
 
             <div className='w-fit h-13 rounded-full bg-secondary gap-3 px-3 flex items-center justify-center hover:scale-110 transition-all cursor-pointer'>
               <Star fill='currentColor' /> {data?.imdbRating} <strong>Đánh giá từ IMDb</strong>

@@ -188,20 +188,34 @@ const MovieDetail = () => {
       </div>
     )
   }
+  const handleClickEditVideo = () => {
+    if (id) {
+      navigate(`/admin/movies/${id}/edit-video`)
+    }
+  }
 
   return (
     <section className='w-full min-h-screen px-5 pt-10 flex flex-col space-y-6 mb-10'>
-      <div className='flex flex-row justify-start items-center gap-4 mb-6 h-10 w-full'>
-        <button
-          className='p-2 rounded-lg border border-gray-500 hover:bg-gray-700 cursor-pointer'
-          onClick={handleGoBack}
-        >
-          <ArrowLeft />
-        </button>
-        <div>
-          <h1 className='text-2xl font-bold'>{id ? 'Chỉnh sửa phim' : 'Thêm phim mới'}</h1>
-          <p className='text-gray-400'>{id ? 'Cập nhật thông tin phim' : 'Điền thông tin phim mới'}</p>
+      <div className='flex flex-row justify-between items-center mb-6 h-10 w-full pr-10'>
+        <div className='flex flex-row justify-start items-center gap-4'>
+          <button
+            className='p-2 rounded-lg border border-gray-500 hover:bg-gray-700 cursor-pointer'
+            onClick={handleGoBack}
+          >
+            <ArrowLeft />
+          </button>
+          <div>
+            <h1 className='text-2xl font-bold'>{id ? 'Chỉnh sửa phim' : 'Thêm phim mới'}</h1>
+            <p className='text-gray-400'>{id ? 'Cập nhật thông tin phim' : 'Điền thông tin phim mới'}</p>
+          </div>
         </div>
+        {id && (
+          <div>
+            <button onClick={handleClickEditVideo} className='cursor-pointer'>
+              <span>Chỉnh sửa video</span>
+            </button>
+          </div>
+        )}
       </div>
 
       <form className='flex flex-col gap-6 w-full max-w-4xl mx-auto' onSubmit={handleSubmit(onSubmit)}>

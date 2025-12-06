@@ -84,7 +84,9 @@ const CommentAdminPage = () => {
                     <td className='px-6 py-4 text-sm max-w-md'>
                       <p className='break-words'>{comment.content}</p>
                     </td>
-                    <td className='px-6 py-4 text-sm text-gray-400 whitespace-nowrap'>{comment.createdAt}</td>
+                    <td className='px-6 py-4 text-sm text-gray-400 whitespace-nowrap'>
+                      {comment.createdAt ? new Date(comment.createdAt).toLocaleString() : ''}
+                    </td>
                     <td className='px-6 py-4 text-center'>
                       <span
                         className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
