@@ -6,12 +6,12 @@ import { logout } from '../../../redux/api_request/auth_api'
 
 const Navbar = () => {
   const { show, setShow, nodeRef } = useClickOutside()
-  const admin = useSelector((state: any) => state.auth.login.currentUser?.user)
+  const admin = useSelector((state: any) => state.auth.login.currentUser)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
   const handleLogout = () => {
-    logout(dispatch, navigate)
+    logout(dispatch)
     navigate('/')
     setShow(false)
   }

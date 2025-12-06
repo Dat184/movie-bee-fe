@@ -13,7 +13,7 @@ const Comment = ({ movieId }: { movieId: string }) => {
   const totalPages = useSelector((state: any) => state.comment.getCommentsByMovieId?.meta?.pages)
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [content, setContent] = useState('')
-  const user = useSelector((state: any) => state.auth.login.currentUser?.user)
+  const user = useSelector((state: any) => state.auth.login.currentUser)
 
   // useEffect(() => {
   //   if (movieId) {
