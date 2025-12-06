@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getCommentsByMovieId, postComment } from '../redux/api_request/comment_api'
 import { clearComments } from '../redux/slice/commentSlice'
 import { toast } from 'react-toastify'
+import Loading from './Loading'
 
 const Comment = ({ movieId }: { movieId: string }) => {
   const dispatch = useDispatch()
@@ -57,7 +58,7 @@ const Comment = ({ movieId }: { movieId: string }) => {
   }
 
   if (isPostingComment) {
-    return <div>Đang gửi bình luận...</div>
+    return <Loading></Loading>
   }
   return (
     <>
