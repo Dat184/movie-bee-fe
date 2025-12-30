@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { UserRound, ChevronDown, User, LogOut } from 'lucide-react'
-import {  useEffect, useState } from 'react'
+import { UserRound, ChevronDown, User, LogOut, Menu, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import logo from '../../assets/img/movie_bee_logo3.svg'
 import { useSelector, useDispatch } from 'react-redux'
 import useClickOutside from '../../hook/useClickOutside'
@@ -8,6 +8,7 @@ import { logout, profile } from '../../redux/api_request/auth_api'
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const user = useSelector((state: any) => state.auth.profile?.userInfo)
   const { show, setShow, nodeRef } = useClickOutside('.user-dropdown-trigger')
   const dispatch = useDispatch()
@@ -18,7 +19,7 @@ const Header = () => {
   }, [dispatch])
 
   const handleLogout = () => {
-    logout(dispatch, navigate)
+    logout(dispatch)
     profile(dispatch)
     setShow(false)
   }
@@ -35,15 +36,25 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 w-full z-50 flex justify-between items-center text-white py-4 px-10 transition-all duration-300 ${
-        isScrolled ? 'bg-header-color backdrop-blur-md' : 'bg-transparent'
+      className={`fixed top-0 w-full z-50 flex justify-between items-center text-white py-4 px-4 md:px-10 transition-all duration-300 bg-header-color ${
+        isScrolled || isMobileMenuOpen
+          ? 'md:bg-header-color md:backdrop-blur-md md:shadow-md'
+          : 'md:bg-transparent md:shadow-none'
       }`}
     >
-      {/* Logo */}
-      <NavLink to='/' className='ml-10'>
-        <img src={logo} alt='MovieBee Logo' className='w-48 h-12 object-contain' />
-      </NavLink>
-      <div className='flex gap-x-10'>
+      <div className='flex items-center gap-x-4'>
+        {/* Mobile Menu Button */}
+        <button className='md:hidden' onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          {isMobileMenuOpen ? <X /> : <Menu />}
+        </button>
+        {/* Logo */}
+        <NavLink to='/'>
+          <img src={logo} alt='MovieBee Logo' className='w-32 md:w-48 h-10 md:h-12 object-contain' />
+        </NavLink>
+      </div>
+
+      {/* Desktop Navigation */}
+      <div className='hidden md:flex gap-x-10'>
         <NavLink to='/' className={({ isActive }) => (isActive ? 'text-primary' : '')}>
           Trang chủ
         </NavLink>
@@ -54,6 +65,33 @@ const Header = () => {
           Giới thiệu
         </NavLink>
       </div>
+
+      {/* Mobile Navigation Drawer */}
+      {isMobileMenuOpen && (
+        <div className='absolute top-full left-0 w-full bg-header-color/95 backdrop-blur-md md:hidden flex flex-col items-center py-4 gap-4 shadow-lg animate-in slide-in-from-top-2'>
+          <NavLink
+            to='/'
+            className={({ isActive }) => (isActive ? 'text-primary' : '')}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Trang chủ
+          </NavLink>
+          <NavLink
+            to='/movies'
+            className={({ isActive }) => (isActive ? 'text-primary' : '')}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Danh sách phim
+          </NavLink>
+          <NavLink
+            to='/contact'
+            className={({ isActive }) => (isActive ? 'text-primary' : '')}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Giới thiệu
+          </NavLink>
+        </div>
+      )}
       {user ? (
         <div className='relative' ref={nodeRef}>
           <div

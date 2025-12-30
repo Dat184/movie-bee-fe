@@ -17,27 +17,33 @@ const DetailCard = ({ data }: { data: Movie }) => {
   const handleClickPlaybtn = () => {
     navigate(`/watch/${data?._id}`)
   }
-  console.log(data)
+  
   return (
-    <div className='w-full h-full p-5 -mt-[100px] flex flex-row z-10 '>
-      <div className='w-1/3 h-full rounded-l-2xl rounded-r-[3rem] bg-bg-color'>
-        <div className='p-5 flex flex-col justify-center items-start h-full gap-2'>
-          <img src={data?.posterPath} alt='Movie Poster' className='h-1/2 w-1/2 rounded-xl' />
-          <h1 className='text-2xl font-bold'>{data?.title}</h1>
-          <div className='flex flex-wrap gap-2'>
-            {data.genres.map((genre) => (
+    <div className='w-full h-full p-5 mt-10 md:-mt-[100px] flex flex-col md:flex-row z-10 '>
+      <div className='w-full md:w-1/3 h-full rounded-2xl md:rounded-l-2xl md:rounded-r-[3rem] bg-transparent md:bg-bg-color'>
+        <div className='p-5 flex flex-col justify-center items-center md:items-start h-full gap-2'>
+          <img
+            src={data?.posterPath}
+            alt='Movie Poster'
+            className='h-2/3 w-2/3 md:h-1/2 md:w-1/2 rounded-xl object-cover shadow-lg'
+          />
+          <h1 className='text-3xl md:text-2xl font-bold text-center md:text-left shadow-black drop-shadow-md'>
+            {data?.title}
+          </h1>
+          <div className='flex flex-wrap gap-2 justify-center md:justify-start'>
+            {data?.genres?.map((genre) => (
               <span key={genre._id} className='py-2 px-1 rounded-md bg-white/10 text-xs'>
                 {genre.name}
               </span>
             ))}
           </div>
-          <p className='mt-2'> Giới thiệu:</p>
+          <p className='mt-2 hidden md:block'> Giới thiệu:</p>
           <p className='text-sm text-gray-400 '>{data?.overview}</p>
         </div>
       </div>
-      <div className='w-2/3  rounded-r-2xl rounded-l-[3rem] bg-bg-color'>
-        <div className='p-10'>
-          <div className='flex flex-row gap-3 justify-between items-center'>
+      <div className='w-full md:w-2/3 rounded-2xl md:rounded-r-2xl md:rounded-l-[3rem] bg-bg-color mt-4 md:mt-0'>
+        <div className='p-5 md:p-10'>
+          <div className='flex flex-row gap-3 justify-center md:justify-between items-center'>
             <PlayNowBtn onClick={handleClickPlaybtn} />
 
             <div className='w-fit h-13 rounded-full bg-secondary gap-3 px-3 flex items-center justify-center hover:scale-110 transition-all cursor-pointer'>
@@ -65,7 +71,7 @@ const DetailCard = ({ data }: { data: Movie }) => {
             {activeTab === 'cast' && <MovieMeta type='credits' movie={data} />}
           </div>
 
-          <Comment movieId={data._id} />
+          <Comment movieId={data?._id} />
         </div>
       </div>
     </div>
@@ -79,7 +85,7 @@ function MovieMeta({ type = 'videos', movie }: { type: any; movie: Movie }) {
     return (
       <div className='mt-5'>
         <h2 className='text-center text-2xl mb-10'>Casts</h2>
-        <div className='grid grid-cols-5 gap-5'>
+        <div className='grid grid-cols-2 md:grid-cols-5 gap-5'>
           {casts.slice(0, 8).map((item: any) => (
             <div key={item._id} className='flex flex-col items-center'>
               <img src={item.avatarPath} alt={item.name} className='w-full h-full object-cover rounded-lg mb-3' />

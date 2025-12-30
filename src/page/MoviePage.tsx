@@ -30,22 +30,22 @@ const MoviePage = () => {
   }
   return (
     <div>
-      <div className='flex mt-52 justify-center items-center'>
-        <div className='bg-[rgba(255,255,255,.08)] w-[500px] h-10 flex flex-row items-center rounded-l-md px-3'>
+      <div className='flex mt-24 md:mt-52 justify-center items-center px-4'>
+        <div className='bg-[rgba(255,255,255,.08)] w-full max-w-[500px] h-10 flex flex-row items-center rounded-l-md px-3'>
           <Search />
           <input
             type='text'
-            className='bg-transparent border-none outline-none text-white ml-2 flex-1'
+            className='bg-transparent border-none outline-none text-white ml-2 flex-1 w-full'
             placeholder='Tìm kiếm phim...'
             onChange={handleChange}
           />
         </div>
-        <button className='bg-primary text-white rounded-r-md py-1 px-6 h-10'>Tìm</button>
+        <button className='bg-primary text-white rounded-r-md py-1 px-6 h-10 whitespace-nowrap'>Tìm</button>
       </div>
       {isloading && <Loading></Loading>}
       {!isloading && movies.length > 0 && (
         <>
-          <div className='grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4 p-5 mt-10'>
+          <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4 p-5 mt-10'>
             {movies.map((movie: Movie) => (
               <MovieCard key={movie._id} movie={movie} />
             ))}

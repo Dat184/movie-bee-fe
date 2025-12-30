@@ -1,6 +1,4 @@
-import useSWR from 'swr'
 import MovieCard from '../MovieCard'
-import { fetchWithToken, tmdbAPI } from '../../config/config'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { useEffect } from 'react'
 import { getCartoonMovie } from '../../redux/api_request/collection_api'
@@ -51,6 +49,18 @@ const Trending = () => {
               spaceBetween={17}
               loop={true}
               breakpoints={{
+                320: {
+                  slidesPerView: 2,
+                  spaceBetween: 10
+                },
+                640: {
+                  slidesPerView: 3,
+                  spaceBetween: 15
+                },
+                1024: {
+                  slidesPerView: 5,
+                  spaceBetween: 20
+                },
                 1521: {
                   slidesPerView: 7,
                   spaceBetween: 20

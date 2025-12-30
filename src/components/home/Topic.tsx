@@ -15,7 +15,7 @@ const Topic = () => {
     getAnimeMovie('69284e1613245d19fd0595a3', dispatch)
   }, [dispatch])
   return (
-    <section className='Topic h-fit px-5 my-30'>
+    <section className='Topic h-fit px-2 md:px-5 my-10 md:my-30'>
       <div className='bg-gradient-to-t from-[#282B3A00] to-[#282B3AFF] h-full w-full rounded-2xl p-8 space-y-10'>
         <MovieList title='Vũ trụ Marvel' movies={movieMaver} />
         <MovieList title='Anime' movies={movieAnime} />

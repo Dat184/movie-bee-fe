@@ -11,11 +11,11 @@ const MovieList = ({ title, movies }: { title: string; movies: Movie[] }) => {
     return state.collection?.actionPlaylist?.isFetching
   })
   return (
-    <div className='w-full h-fit flex flex-row items-center justify-between movie-list'>
-      <div className=''>
+    <div className='w-full h-fit flex flex-col md:flex-row items-start md:items-center justify-between movie-list'>
+      <div className='w-full md:w-1/6 mb-4 md:mb-0'>
         <h2
           className={
-            'text-3xl font-bold' +
+            'text-2xl md:text-3xl font-bold' +
             (title === 'Vũ trụ Marvel'
               ? ' mb-5 text-gradient-marvel'
               : title === 'Anime'
@@ -26,7 +26,7 @@ const MovieList = ({ title, movies }: { title: string; movies: Movie[] }) => {
           {title}
         </h2>
       </div>
-      <div className='flex overflow-x-auto pb-5 w-5/6'>
+      <div className='flex overflow-x-auto pb-5 w-full md:w-5/6'>
         {isLoading && (
           <div className='flex flex-row gap-5 w-full h-fit'>
             <div className='w-1/3 h-full'>
@@ -47,6 +47,18 @@ const MovieList = ({ title, movies }: { title: string; movies: Movie[] }) => {
             spaceBetween={20}
             loop={true}
             breakpoints={{
+              320: {
+                slidesPerView: 2,
+                spaceBetween: 10
+              },
+              640: {
+                slidesPerView: 3,
+                spaceBetween: 15
+              },
+              1024: {
+                slidesPerView: 4,
+                spaceBetween: 20
+              },
               1521: {
                 slidesPerView: 3,
                 spaceBetween: 25

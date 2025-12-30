@@ -1,5 +1,3 @@
-import { fetchWithToken, tmdbAPI } from '../../config/config'
-import useSWR from 'swr'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import MovieCard from '../MovieCard'
 import { useEffect } from 'react'
@@ -52,6 +50,18 @@ const Popular = () => {
               spaceBetween={17}
               loop={movieCinema.length >= 3}
               breakpoints={{
+                320: {
+                  slidesPerView: 2,
+                  spaceBetween: 10
+                },
+                640: {
+                  slidesPerView: 3,
+                  spaceBetween: 15
+                },
+                1024: {
+                  slidesPerView: 5,
+                  spaceBetween: 20
+                },
                 1521: {
                   slidesPerView: 7,
                   spaceBetween: 20
